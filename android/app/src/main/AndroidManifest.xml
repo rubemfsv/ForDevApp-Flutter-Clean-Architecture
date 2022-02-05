@@ -2,7 +2,6 @@
     package="com.example.hear_mobile">
    <application
         android:label="hear_mobile"
-        android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
