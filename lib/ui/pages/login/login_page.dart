@@ -16,20 +16,25 @@ class LoginPage extends StatelessWidget {
           presenter.isLoadingStream.listen((isLoading) {
             if (isLoading) {
               showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  child: SimpleDialog(
-                    children: <Widget>[
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          CircularProgressIndicator(),
-                          SizedBox(height: 10),
-                          Text('Aguarde...', textAlign: TextAlign.center),
-                        ],
-                      ),
-                    ],
-                  ));
+                context: context,
+                barrierDismissible: false,
+                child: SimpleDialog(
+                  children: <Widget>[
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        CircularProgressIndicator(),
+                        SizedBox(height: 10),
+                        Text('Aguarde...', textAlign: TextAlign.center),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              if (Navigator.canPop(context)) {
+                Navigator.of(context).pop();
+              }
             }
           });
           return SingleChildScrollView(
