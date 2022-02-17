@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:hear_mobile/domain/helpers/domain_error.dart';
 import 'package:meta/meta.dart';
 
 import '../../domain/usecases/usecases.dart';
@@ -8,6 +9,7 @@ class LoginState {
   String email;
   String password;
   String emailError;
+  String mainError;
   String passwordError;
   bool isLoading = false;
 
@@ -28,6 +30,8 @@ class StreamLoginPresenter {
       _controller.stream.map((state) => state.emailError).distinct();
   Stream<String> get passwordErrorStream =>
       _controller.stream.map((state) => state.passwordError).distinct();
+  Stream<String> get mainErrorStream =>
+      _controller.stream.map((state) => state.mainError).distinct();
   Stream<bool> get isFormValidStream =>
       _controller.stream.map((state) => state.isFormValid).distinct();
   Stream<bool> get isLoadingStream =>
@@ -54,8 +58,14 @@ class StreamLoginPresenter {
   Future<void> auth() async {
     _state.isLoading = true;
     _update();
-    await authentication.auth(
-        AuthenticationParams(email: _state.email, password: _state.password));
+
+    try {
+      await authentication.auth(
+          AuthenticationParams(email: _state.email, password: _state.password));
+    } on DomainError catch (error) {
+      _state.mainError = error.description;
+    }
+
     _state.isLoading = false;
     _update();
   }
