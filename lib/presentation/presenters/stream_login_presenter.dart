@@ -18,7 +18,7 @@ class LoginState {
       emailError == null &&
       passwordError == null &&
       email != null &&
-      passwordError != null;
+      password != null;
 }
 
 class StreamLoginPresenter implements LoginPresenter {
