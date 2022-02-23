@@ -16,9 +16,8 @@
 13. Chamar o Authentication com email e senha corretos
 14. Notificar o isLoadingStream como true antes de chamar o Authentication
 15. Notificar o isLoadingStream como false no fim do Authentication
-16. Notificar o mainErrorStream caso o Authentication retorne erro
-17. Fechar todos os Streams no dispose
-18. Gravar o Account no cache em caso de sucesso
-19. Notificar o mainErrorStream caso o SaveCurrentAccount retorne erro
-20. Levar o usuário pra tela de Enquetes em caso de sucesso
-21. Levar o usuário pra tela de Criar Conta ao clicar no link de criar conta
+16. Fechar todos os Streams no dispose
+17. Gravar o Account no cache em caso de sucesso
+18. Notificar o mainErrorStream caso o SaveCurrentAccount retorne erro
+19. Levar o usuário pra tela de Enquetes em caso de sucesso
+20. Levar o usuário pra tela de Criar Conta ao clicar no link de criar conta
