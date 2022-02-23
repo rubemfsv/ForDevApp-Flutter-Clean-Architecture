@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
+import 'package:hear_mobile/domain/helpers/helpers.dart';
 import 'package:hear_mobile/domain/entities/entities.dart';
 import 'package:hear_mobile/domain/usecases/usecases.dart';
 
@@ -12,7 +13,14 @@ class LocalSaveCurrentAccount implements SaveCurrentAccount {
   LocalSaveCurrentAccount({@required this.saveSecureCacheStorage});
 
   Future<void> save(AccountEntity account) async {
-    await saveSecureCacheStorage.saveSecure(key: 'token', value: account.token);
+    try {
+      await saveSecureCacheStorage.saveSecure(
+        key: 'token',
+        value: account.token,
+      );
+    } catch (error) {
+      throw DomainError.unexpected;
+    }
   }
 }
 
@@ -24,15 +32,31 @@ class SaveSecureCacheStorageSpy extends Mock implements SaveSecureCacheStorage {
 }
 
 void main() {
-  test('Should call SaveSecureCacheStorage with correct values', () async {
-    final saveSecureCacheStorage = SaveSecureCacheStorageSpy();
-    final sut =
-        LocalSaveCurrentAccount(saveSecureCacheStorage: saveSecureCacheStorage);
-    final account = AccountEntity(faker.guid.guid());
+  SaveSecureCacheStorageSpy saveSecureCacheStorage;
+  LocalSaveCurrentAccount sut;
+  AccountEntity account;
 
+  setUp(() {
+    saveSecureCacheStorage = SaveSecureCacheStorageSpy();
+    sut =
+        LocalSaveCurrentAccount(saveSecureCacheStorage: saveSecureCacheStorage);
+    account = AccountEntity(faker.guid.guid());
+  });
+  test('Should call SaveSecureCacheStorage with correct values', () async {
     await sut.save(account);
 
     verify(
         saveSecureCacheStorage.saveSecure(key: 'token', value: account.token));
+  });
+
+  test('Should throw unexpectedError if SaveSecureCacheStorage throws', () {
+    when(saveSecureCacheStorage.saveSecure(
+      key: anyNamed('key'),
+      value: anyNamed('value'),
+    )).thenThrow(Exception());
+
+    final future = sut.save(account);
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
