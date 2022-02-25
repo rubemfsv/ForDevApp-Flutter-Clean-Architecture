@@ -24,6 +24,7 @@ class LoginState {
 class StreamLoginPresenter implements LoginPresenter {
   final Validation validation;
   final Authentication authentication;
+  final SaveCurrentAccount saveCurrentAccount;
 
   var _controller = StreamController<LoginState>.broadcast();
   var _state = LoginState();
@@ -39,8 +40,11 @@ class StreamLoginPresenter implements LoginPresenter {
   Stream<bool> get isLoadingStream =>
       _controller?.stream?.map((state) => state.isLoading)?.distinct();
 
-  StreamLoginPresenter(
-      {@required this.validation, @required this.authentication});
+  StreamLoginPresenter({
+    @required this.validation,
+    @required this.authentication,
+    @required this.saveCurrentAccount,
+  });
 
   void _update() => _controller?.add(_state);
 
@@ -62,8 +66,12 @@ class StreamLoginPresenter implements LoginPresenter {
     _update();
 
     try {
-      await authentication.auth(
-          AuthenticationParams(email: _state.email, password: _state.password));
+      final account = await authentication.auth(AuthenticationParams(
+        email: _state.email,
+        password: _state.password,
+      ));
+
+      await saveCurrentAccount.save(account);
     } on DomainError catch (error) {
       _state.mainError = error.description;
     }
