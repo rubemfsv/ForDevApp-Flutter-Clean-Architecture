@@ -60,7 +60,8 @@ void main() {
       initialRoute: '/login',
       getPages: [
         GetPage(name: '/login', page: () => LoginPage(presenter)),
-        GetPage(name: '/any_route', page: () => Scaffold(body: Text('fake page'))),
+        GetPage(
+            name: '/any_route', page: () => Scaffold(body: Text('fake page'))),
       ],
     );
     await tester.pumpWidget(loginPage);
@@ -257,5 +258,17 @@ void main() {
     expect(Get.currentRoute, '/any_route');
 
     expect(find.text('fake page'), findsOneWidget);
+  });
+
+  testWidgets('Should not change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('');
+    await tester.pump();
+    expect(Get.currentRoute, '/login');
+
+    navigateToController.add(null);
+    await tester.pump();
+    expect(Get.currentRoute, '/login');
   });
 }
