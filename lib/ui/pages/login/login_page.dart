@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import '../../../utils/i18n/i18n.dart';
 import '../../components/components.dart';
 import 'components/components.dart';
 import 'login_presenter.dart';
@@ -50,7 +51,7 @@ class LoginPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   LoginHeader(),
-                  Headline1(text: 'Login'),
+                  Headline1(text: R.translations.login),
                   Padding(
                     padding: EdgeInsets.all(32),
                     child: Provider(
@@ -67,7 +68,7 @@ class LoginPage extends StatelessWidget {
                             FlatButton.icon(
                                 onPressed: () {},
                                 icon: Icon(Icons.person),
-                                label: Text('Criar conta'))
+                                label: Text(R.translations.createAccount))
                           ],
                         ),
                       ),
