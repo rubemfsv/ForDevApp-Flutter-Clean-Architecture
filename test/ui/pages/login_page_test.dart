@@ -80,17 +80,23 @@ void main() {
         of: find.bySemanticsLabel(R.translations.emailLabel),
         matching: find.byType(Text));
 
-    expect(emailTextChildren, findsOneWidget,
-        reason:
-            'when a TextFormField has only one text child, means it has no error, since one of the children is always the label text');
+    expect(
+      emailTextChildren,
+      findsOneWidget,
+      reason:
+          'when a TextFormField has only one text child, means it has no error, since one of the children is always the label text',
+    );
 
     final passwordTextChildren = find.descendant(
         of: find.bySemanticsLabel(R.translations.passwordLabel),
         matching: find.byType(Text));
 
-    expect(passwordTextChildren, findsOneWidget,
-        reason:
-            'when a TextFormField has only one text child, means it has no error, since one of the children is always the label text');
+    expect(
+      passwordTextChildren,
+      findsOneWidget,
+      reason:
+          'when a TextFormField has only one text child, means it has no error, since one of the children is always the label text',
+    );
 
     final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
 
