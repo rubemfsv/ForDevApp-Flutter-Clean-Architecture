@@ -8,21 +8,64 @@ import 'package:mockito/mockito.dart';
 import 'package:hear_mobile/ui/pages/pages.dart';
 import 'package:hear_mobile/ui/helpers/helpers.dart';
 
+class SignUpPresenterSpy extends Mock implements SignUpPresenter {}
 
 void main() {
- 
+  SignUpPresenter presenter;
+  StreamController<UIError> nameErrorController;
+  StreamController<UIError> emailErrorController;
+  StreamController<UIError> passwordErrorController;
+  StreamController<UIError> passwordConfirmationErrorController;
+  StreamController<UIError> mainErrorController;
+
+  void initStreams() {
+    nameErrorController = StreamController<UIError>();
+    emailErrorController = StreamController<UIError>();
+    passwordErrorController = StreamController<UIError>();
+    passwordConfirmationErrorController = StreamController<UIError>();
+    mainErrorController = StreamController<UIError>();
+  }
+
+  void closeStreams() {
+    nameErrorController.close();
+    emailErrorController.close();
+    passwordErrorController.close();
+    passwordConfirmationErrorController.close();
+    mainErrorController.close();
+  }
+
+  void mockStreams() {
+    when(presenter.nameErrorStream)
+        .thenAnswer((_) => nameErrorController.stream);
+    when(presenter.emailErrorStream)
+        .thenAnswer((_) => emailErrorController.stream);
+    when(presenter.passwordErrorStream)
+        .thenAnswer((_) => passwordErrorController.stream);
+    when(presenter.passwordConfirmationErrorStream)
+        .thenAnswer((_) => passwordConfirmationErrorController.stream);
+    when(presenter.mainErrorStream)
+        .thenAnswer((_) => mainErrorController.stream);
+  }
+
   Future<void> loadPage(WidgetTester tester) async {
+    presenter = SignUpPresenterSpy();
+    initStreams();
+    mockStreams();
 
     final signUpPage = GetMaterialApp(
       initialRoute: '/signUp',
       getPages: [
-        GetPage(name: '/signUp', page: () => SignUpPage()),
+        GetPage(name: '/signUp', page: () => SignUpPage(presenter)),
         GetPage(
             name: '/any_route', page: () => Scaffold(body: Text('fake page'))),
       ],
     );
     await tester.pumpWidget(signUpPage);
   }
+
+  tearDown(() {
+    closeStreams();
+  });
 
   testWidgets("Should load with correct initial state",
       (WidgetTester tester) async {
@@ -76,5 +119,31 @@ void main() {
 
     expect(button.onPressed, null);
     expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+  testWidgets("Should call validate with correct values",
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    final name = faker.person.name();
+    await tester.enterText(
+        find.bySemanticsLabel(R.translations.nameLabel), name);
+    verify(presenter.validateName(name));
+
+    final email = faker.internet.email();
+    await tester.enterText(
+        find.bySemanticsLabel(R.translations.emailLabel), email);
+    verify(presenter.validateEmail(email));
+
+    final password = faker.internet.password();
+    await tester.enterText(
+        find.bySemanticsLabel(R.translations.passwordLabel), password);
+    verify(presenter.validatePassword(password));
+
+    await tester.enterText(
+      find.bySemanticsLabel(R.translations.passwordConfirmationLabel),
+      password,
+    );
+    verify(presenter.validatePasswordConfirmation(password));
   });
 }
