@@ -68,9 +68,9 @@ void main() {
     mockStreams();
 
     final signUpPage = GetMaterialApp(
-      initialRoute: '/signUp',
+      initialRoute: '/signup',
       getPages: [
-        GetPage(name: '/signUp', page: () => SignUpPage(presenter)),
+        GetPage(name: '/signup', page: () => SignUpPage(presenter)),
         GetPage(
             name: '/any_route', page: () => Scaffold(body: Text('fake page'))),
       ],
@@ -334,5 +334,28 @@ void main() {
     await tester.pump();
 
     expect(find.text(R.translations.msgUnexpectedError), findsOneWidget);
+  });
+
+  testWidgets("Should change page", (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('/any_route');
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/any_route');
+
+    expect(find.text('fake page'), findsOneWidget);
+  });
+
+  testWidgets('Should not change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('');
+    await tester.pump();
+    expect(Get.currentRoute, '/signup');
+
+    navigateToController.add(null);
+    await tester.pump();
+    expect(Get.currentRoute, '/signup');
   });
 }
