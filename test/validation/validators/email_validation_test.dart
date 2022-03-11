@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import 'package:hear_mobile/validation/validators/validators.dart';
+import 'package:hear_mobile/presentation/protocols/protocols.dart';
 
 void main() {
   EmailValidation sut;
@@ -21,6 +22,6 @@ void main() {
   });
 
   test('Should return error if email is invalid', () {
-    expect(sut.validate('rfsv'), 'Campo inválido');
+    expect(sut.validate('rfsv'), ValidationError.invalidField);
   });
 }
