@@ -32,8 +32,7 @@ class RemoteAuthenticationParams {
   final String email;
   final String password;
 
-  RemoteAuthenticationParams(
-      {@required String this.email, @required String this.password});
+  RemoteAuthenticationParams({@required this.email, @required this.password});
 
   factory RemoteAuthenticationParams.fromDomain(AuthenticationParams params) =>
       RemoteAuthenticationParams(
