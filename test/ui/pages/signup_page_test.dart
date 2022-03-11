@@ -147,7 +147,31 @@ void main() {
     verify(presenter.validatePasswordConfirmation(password));
   });
 
-  testWidgets("Should present email error if email is invalid",
+testWidgets("Should present name error",
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    nameErrorController.add(UIError.invalidField);
+    await tester.pump();
+
+    expect(find.text(R.translations.msgInvalidField), findsOneWidget);
+
+    nameErrorController.add(UIError.requiredField);
+    await tester.pump();
+
+    expect(find.text(R.translations.msgRequiredField), findsOneWidget);
+
+    nameErrorController.add(null);
+    await tester.pump();
+
+    expect(
+      find.descendant(
+          of: find.bySemanticsLabel(R.translations.nameLabel),
+          matching: find.byType(Text)),
+      findsOneWidget,
+    );
+  });
+  testWidgets("Should present email error",
       (WidgetTester tester) async {
     await loadPage(tester);
 

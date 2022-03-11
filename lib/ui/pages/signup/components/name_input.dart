@@ -18,7 +18,7 @@ class NameInput extends StatelessWidget {
               Icons.person,
               color: Theme.of(context).primaryColorLight,
             ),
-            // errorText: snapshot.hasData ? snapshot.data.description : null,
+            errorText: snapshot.hasData ? snapshot.data.description : null,
           ),
           keyboardType: TextInputType.emailAddress,
           onChanged: presenter.validateName,
