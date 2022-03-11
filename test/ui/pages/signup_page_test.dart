@@ -147,8 +147,7 @@ void main() {
     verify(presenter.validatePasswordConfirmation(password));
   });
 
-testWidgets("Should present name error",
-      (WidgetTester tester) async {
+  testWidgets("Should present name error", (WidgetTester tester) async {
     await loadPage(tester);
 
     nameErrorController.add(UIError.invalidField);
@@ -171,8 +170,7 @@ testWidgets("Should present name error",
       findsOneWidget,
     );
   });
-  testWidgets("Should present email error",
-      (WidgetTester tester) async {
+  testWidgets("Should present email error", (WidgetTester tester) async {
     await loadPage(tester);
 
     emailErrorController.add(UIError.invalidField);
@@ -196,8 +194,7 @@ testWidgets("Should present name error",
     );
   });
 
-  testWidgets("Should present password error",
-      (WidgetTester tester) async {
+  testWidgets("Should present password error", (WidgetTester tester) async {
     await loadPage(tester);
 
     passwordErrorController.add(UIError.invalidField);
@@ -215,7 +212,32 @@ testWidgets("Should present name error",
 
     expect(
       find.descendant(
-          of: find.bySemanticsLabel(R.translations.emailLabel),
+          of: find.bySemanticsLabel(R.translations.passwordLabel),
+          matching: find.byType(Text)),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets("Should present passwordConfirmation error",
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    passwordConfirmationErrorController.add(UIError.invalidField);
+    await tester.pump();
+
+    expect(find.text(R.translations.msgInvalidField), findsOneWidget);
+
+    passwordConfirmationErrorController.add(UIError.requiredField);
+    await tester.pump();
+
+    expect(find.text(R.translations.msgRequiredField), findsOneWidget);
+
+    passwordConfirmationErrorController.add(null);
+    await tester.pump();
+
+    expect(
+      find.descendant(
+          of: find.bySemanticsLabel(R.translations.passwordConfirmationLabel),
           matching: find.byType(Text)),
       findsOneWidget,
     );
