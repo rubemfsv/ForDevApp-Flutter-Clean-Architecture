@@ -195,4 +195,29 @@ testWidgets("Should present name error",
       findsOneWidget,
     );
   });
+
+  testWidgets("Should present password error",
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    passwordErrorController.add(UIError.invalidField);
+    await tester.pump();
+
+    expect(find.text(R.translations.msgInvalidField), findsOneWidget);
+
+    passwordErrorController.add(UIError.requiredField);
+    await tester.pump();
+
+    expect(find.text(R.translations.msgRequiredField), findsOneWidget);
+
+    passwordErrorController.add(null);
+    await tester.pump();
+
+    expect(
+      find.descendant(
+          of: find.bySemanticsLabel(R.translations.emailLabel),
+          matching: find.byType(Text)),
+      findsOneWidget,
+    );
+  });
 }
