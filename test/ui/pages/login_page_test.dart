@@ -118,7 +118,7 @@ void main() {
     emailErrorController.add(UIError.invalidField);
     await tester.pump();
 
-    expect(find.text('Campo inválido'), findsOneWidget);
+    expect(find.text(R.translations.msgInvalidField), findsOneWidget);
   });
 
   testWidgets("Should present error if email is empty",
@@ -128,7 +128,7 @@ void main() {
     emailErrorController.add(UIError.requiredField);
     await tester.pump();
 
-    expect(find.text('Campo obrigatório'), findsOneWidget);
+    expect(find.text(R.translations.msgRequiredField), findsOneWidget);
   });
 
   testWidgets("Should present no error if email is valid",
@@ -151,7 +151,7 @@ void main() {
     passwordErrorController.add(UIError.requiredField);
     await tester.pump();
 
-    expect(find.text('Campo obrigatório'), findsOneWidget);
+    expect(find.text(R.translations.msgRequiredField), findsOneWidget);
   });
 
   testWidgets("Should present no error if password is valid",
@@ -231,7 +231,7 @@ void main() {
     mainErrorController.add(UIError.invalidCredentials);
     await tester.pump();
 
-    expect(find.text('Credenciais inválidas.'), findsOneWidget);
+    expect(find.text(R.translations.msgInvalidCredentials), findsOneWidget);
   });
 
   testWidgets("Should presents error message if authentication throws",
@@ -241,8 +241,7 @@ void main() {
     mainErrorController.add(UIError.unexpected);
     await tester.pump();
 
-    expect(find.text('Algo errado aconteceu. Tente novamente em breve.'),
-        findsOneWidget);
+    expect(find.text(R.translations.msgUnexpectedError), findsOneWidget);
   });
 
   testWidgets("Should change page", (WidgetTester tester) async {

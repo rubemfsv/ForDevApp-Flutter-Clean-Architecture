@@ -2,7 +2,7 @@ import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../utils/i18n/i18n.dart';
+import '../../helpers/helpers.dart';
 import './splash.dart';
 
 class SplashPage extends StatelessWidget {
