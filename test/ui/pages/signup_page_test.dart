@@ -315,4 +315,24 @@ void main() {
 
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
+
+  testWidgets("Should presents error message if signUp fails",
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    mainErrorController.add(UIError.emailInUse);
+    await tester.pump();
+
+    expect(find.text(R.translations.msgEmailInUse), findsOneWidget);
+  });
+
+  testWidgets("Should presents error message if signUp throws",
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    mainErrorController.add(UIError.unexpected);
+    await tester.pump();
+
+    expect(find.text(R.translations.msgUnexpectedError), findsOneWidget);
+  });
 }
