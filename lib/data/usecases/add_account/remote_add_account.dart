@@ -21,8 +21,8 @@ class RemoteAddAccount implements AddAccount {
 
       return RemoteAccountModel.fromJson(hpptResponse).toEntity();
     } on HttpError catch (error) {
-      throw error == HttpError.unauthorized
-          ? DomainError.invalidCredentials
+      throw error == HttpError.forbidden
+          ? DomainError.emailInUse
           : DomainError.unexpected;
     }
   }

@@ -16,8 +16,10 @@ void main() {
   String url;
   String password;
   AddAccountParams params;
-  Map mockValidData() =>
-      {'accessToken': faker.guid.guid(), 'name': faker.person.name()};
+  Map mockValidData() => {
+        'accessToken': faker.guid.guid(),
+        'name': faker.person.name(),
+      };
 
   PostExpectation mockRequest() => when(httpClient.request(
         url: anyNamed('url'),
@@ -82,6 +84,14 @@ void main() {
     final future = sut.add(params);
 
     expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if HpptClient returns 403', () async {
+    mockHttpError(HttpError.forbidden);
+
+    final future = sut.add(params);
+
+    expect(future, throwsA(DomainError.emailInUse));
   });
 
   test('Should throw UnexpectedError if HpptClient returns 404', () async {
