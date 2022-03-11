@@ -6,7 +6,7 @@ import '../ui/components/components.dart';
 import 'factories/factories.dart';
 
 void main() {
-  // R.load(Locale('en', 'US')); No futuro, usar essa função caso queira botar botões de bandeiras de idioma.
+  // R.load(Locale('en', 'US')); //No futuro, usar essa função caso queira botar botões de bandeiras de idioma.
   runApp(App());
 }
 
