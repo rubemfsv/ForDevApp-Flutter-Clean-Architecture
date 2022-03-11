@@ -77,14 +77,16 @@ void main() {
     await loadPage(tester);
 
     final emailTextChildren = find.descendant(
-        of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
+        of: find.bySemanticsLabel(R.translations.emailLabel),
+        matching: find.byType(Text));
 
     expect(emailTextChildren, findsOneWidget,
         reason:
             'when a TextFormField has only one text child, means it has no error, since one of the children is always the label text');
 
     final passwordTextChildren = find.descendant(
-        of: find.bySemanticsLabel('Senha'), matching: find.byType(Text));
+        of: find.bySemanticsLabel(R.translations.passwordLabel),
+        matching: find.byType(Text));
 
     expect(passwordTextChildren, findsOneWidget,
         reason:
@@ -101,12 +103,14 @@ void main() {
     await loadPage(tester);
 
     final email = faker.internet.email();
-    await tester.enterText(find.bySemanticsLabel('Email'), email);
+    await tester.enterText(
+        find.bySemanticsLabel(R.translations.emailLabel), email);
 
     verify(presenter.validateEmail(email));
 
     final password = faker.internet.password();
-    await tester.enterText(find.bySemanticsLabel('Senha'), password);
+    await tester.enterText(
+        find.bySemanticsLabel(R.translations.passwordLabel), password);
 
     verify(presenter.validatePassword(password));
   });
@@ -140,7 +144,8 @@ void main() {
 
     expect(
         find.descendant(
-            of: find.bySemanticsLabel('Email'), matching: find.byType(Text)),
+            of: find.bySemanticsLabel(R.translations.emailLabel),
+            matching: find.byType(Text)),
         findsOneWidget);
   });
 
@@ -163,7 +168,8 @@ void main() {
 
     expect(
         find.descendant(
-            of: find.bySemanticsLabel('Senha'), matching: find.byType(Text)),
+            of: find.bySemanticsLabel(R.translations.passwordLabel),
+            matching: find.byType(Text)),
         findsOneWidget);
   });
 
