@@ -17,6 +17,8 @@ void main() {
   StreamController<UIError> passwordErrorController;
   StreamController<UIError> passwordConfirmationErrorController;
   StreamController<UIError> mainErrorController;
+  StreamController<String> navigateToController;
+  StreamController<bool> isFormValidController;
 
   void initStreams() {
     nameErrorController = StreamController<UIError>();
@@ -24,6 +26,8 @@ void main() {
     passwordErrorController = StreamController<UIError>();
     passwordConfirmationErrorController = StreamController<UIError>();
     mainErrorController = StreamController<UIError>();
+    navigateToController = StreamController<String>();
+    isFormValidController = StreamController<bool>();
   }
 
   void closeStreams() {
@@ -32,6 +36,8 @@ void main() {
     passwordErrorController.close();
     passwordConfirmationErrorController.close();
     mainErrorController.close();
+    navigateToController.close();
+    isFormValidController.close();
   }
 
   void mockStreams() {
@@ -45,6 +51,10 @@ void main() {
         .thenAnswer((_) => passwordConfirmationErrorController.stream);
     when(presenter.mainErrorStream)
         .thenAnswer((_) => mainErrorController.stream);
+    when(presenter.navigateToStream)
+        .thenAnswer((_) => navigateToController.stream);
+    when(presenter.isFormValidStream)
+        .thenAnswer((_) => isFormValidController.stream);
   }
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -241,5 +251,29 @@ void main() {
           matching: find.byType(Text)),
       findsOneWidget,
     );
+  });
+
+  testWidgets("Should enable button if form is valid",
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(true);
+    await tester.pump();
+
+    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+
+    expect(button.onPressed, isNotNull);
+  });
+
+  testWidgets("Should disable button if form is invalid",
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(false);
+    await tester.pump();
+
+    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+
+    expect(button.onPressed, null);
   });
 }

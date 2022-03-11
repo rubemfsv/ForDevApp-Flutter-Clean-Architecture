@@ -7,13 +7,13 @@ import '../signup_presenter.dart';
 class SignUpButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // final presenter = Provider.of<SignUpPresenter>(context);
+    final presenter = Provider.of<SignUpPresenter>(context);
 
     return StreamBuilder<bool>(
-      // stream: presenter.isFormValidStream,
+      stream: presenter.isFormValidStream,
       builder: (context, snapshot) {
         return RaisedButton(
-          onPressed: null,
+          onPressed: snapshot.data == true ? presenter.signUp : null,
           child: Text(R.translations.createAccount.toUpperCase()),
         );
       },
