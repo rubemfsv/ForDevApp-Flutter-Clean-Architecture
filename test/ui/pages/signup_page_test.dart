@@ -146,4 +146,29 @@ void main() {
     );
     verify(presenter.validatePasswordConfirmation(password));
   });
+
+  testWidgets("Should present email error if email is invalid",
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    emailErrorController.add(UIError.invalidField);
+    await tester.pump();
+
+    expect(find.text(R.translations.msgInvalidField), findsOneWidget);
+
+    emailErrorController.add(UIError.requiredField);
+    await tester.pump();
+
+    expect(find.text(R.translations.msgRequiredField), findsOneWidget);
+
+    emailErrorController.add(null);
+    await tester.pump();
+
+    expect(
+      find.descendant(
+          of: find.bySemanticsLabel(R.translations.emailLabel),
+          matching: find.byType(Text)),
+      findsOneWidget,
+    );
+  });
 }
