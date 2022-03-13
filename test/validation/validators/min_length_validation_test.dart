@@ -22,4 +22,8 @@ void main() {
     expect(sut.validate(faker.randomGenerator.string(4, min: 1)),
         ValidationError.invalidField);
   });
+
+  test('Should return null if value is equal to min length', () {
+    expect(sut.validate(faker.randomGenerator.string(5, min: 5)), null);
+  });
 }
