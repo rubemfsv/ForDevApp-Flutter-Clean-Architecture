@@ -86,6 +86,14 @@ void main() {
     expect(future, throwsA(DomainError.unexpected));
   });
 
+  test('Should throw AccessDeniedError if HpptClient returns 403', () async {
+    mockHttpError(HttpError.forbidden);
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.accessDenied));
+  });
+
   test('Should throw UnexpectedError if HpptClient returns 404', () async {
     mockHttpError(HttpError.notFound);
 
