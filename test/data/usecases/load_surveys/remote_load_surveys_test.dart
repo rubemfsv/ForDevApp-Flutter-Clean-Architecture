@@ -1,8 +1,9 @@
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hear_mobile/domain/entities/entities.dart';
 import 'package:mockito/mockito.dart';
 
+import 'package:hear_mobile/domain/entities/entities.dart';
+import 'package:hear_mobile/domain/helpers/helpers.dart';
 import 'package:hear_mobile/data/http/http.dart';
 import 'package:hear_mobile/data/usecases/usecases.dart';
 
@@ -67,5 +68,17 @@ void main() {
         didAnswer: list[1]['didAnswer'],
       )
     ]);
+  });
+
+  test(
+      'Should throw UnexpectedError if HpptClient returns 200 with invalid data',
+      () async {
+    mockHttpData([
+      {'invalid_key': 'invalid_value'}
+    ]);
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
