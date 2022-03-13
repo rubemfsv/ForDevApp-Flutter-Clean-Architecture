@@ -26,4 +26,8 @@ void main() {
   test('Should return null if value is equal to min length', () {
     expect(sut.validate(faker.randomGenerator.string(5, min: 5)), null);
   });
+
+    test('Should return null if value is bigger than min length', () {
+    expect(sut.validate(faker.randomGenerator.string(6, min: 6)), null);
+  });
 }

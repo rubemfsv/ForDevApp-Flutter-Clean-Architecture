@@ -10,7 +10,7 @@ class MinLengthValidation implements FieldValidation {
   MinLengthValidation({@required this.field, @required this.length});
 
   ValidationError validate(String value) {
-    return value?.length == length
+    return value != null && value.length >= length
         ? null
         : ValidationError.invalidField;
   }
