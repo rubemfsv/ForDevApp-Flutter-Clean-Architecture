@@ -46,6 +46,21 @@ void main() {
     await tester.pumpWidget(surveysPage);
   }
 
+  List<SurveyViewModel> makeSurveys() => [
+        SurveyViewModel(
+          id: '1',
+          question: 'Question 1',
+          date: 'Date 1',
+          didAnswer: true,
+        ),
+        SurveyViewModel(
+          id: '2',
+          question: 'Question 2',
+          date: 'Date 2',
+          didAnswer: false,
+        ),
+      ];
+
   tearDown(() {
     closeStreams();
   });
@@ -87,6 +102,21 @@ void main() {
 
     expect(find.text(R.translations.msgUnexpectedError), findsOneWidget);
     expect(find.text(R.translations.reloadButtonText), findsOneWidget);
-    expect(find.text(faker.randomGenerator.string(20)), findsNothing);
+    expect(find.text('Question 1'), findsNothing);
+  });
+
+  testWidgets("Should present list if loadSurveysStream succeeds",
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    loadSurveysController.add(makeSurveys());
+    await tester.pump();
+
+    expect(find.text(R.translations.msgUnexpectedError), findsNothing);
+    expect(find.text(R.translations.reloadButtonText), findsNothing);
+    expect(find.text('Question 1'), findsWidgets);
+    expect(find.text('Question 2'), findsWidgets);
+    expect(find.text('Date 1'), findsWidgets);
+    expect(find.text('Date 2'), findsWidgets);
   });
 }
