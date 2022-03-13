@@ -24,4 +24,8 @@ void main() {
   test('Should return error if email is invalid', () {
     expect(sut.validate({'any_field': 'rfsv'}), ValidationError.invalidField);
   });
+
+  test('Should return null on invalid cases', () {
+    expect(sut.validate({}), null);
+  });
 }
