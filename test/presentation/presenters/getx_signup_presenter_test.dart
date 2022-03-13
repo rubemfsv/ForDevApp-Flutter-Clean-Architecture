@@ -303,8 +303,8 @@ void main() {
     sut.validatePasswordConfirmation(passwordConfirmation);
 
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
-    sut.mainErrorStream.listen(
-        expectAsync1((error) => expect(error, UIError.emailInUse)));
+    sut.mainErrorStream
+        .listen(expectAsync1((error) => expect(error, UIError.emailInUse)));
 
     await sut.signUp();
   });
@@ -319,6 +319,18 @@ void main() {
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
     sut.mainErrorStream
         .listen(expectAsync1((error) => expect(error, UIError.unexpected)));
+
+    await sut.signUp();
+  });
+
+  test('Should change page on success', () async {
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+
+    sut.navigateToStream
+        .listen(expectAsync1((page) => expect(page, '/surveys')));
 
     await sut.signUp();
   });
