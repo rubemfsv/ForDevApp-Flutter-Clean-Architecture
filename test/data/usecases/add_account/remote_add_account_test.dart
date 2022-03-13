@@ -8,7 +8,7 @@ import 'package:hear_mobile/domain/usecases/usecases.dart';
 import 'package:hear_mobile/data/http/http.dart';
 import 'package:hear_mobile/data/usecases/usecases.dart';
 
-class HttpClientSpy extends Mock implements HttpClient {}
+class HttpClientSpy extends Mock implements HttpClient<Map> {}
 
 void main() {
   RemoteAddAccount sut;
