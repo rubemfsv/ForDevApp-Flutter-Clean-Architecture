@@ -15,4 +15,5 @@ abstract class Translations {
   String get enterButtonText;
   String get loading;
   String get login;
+  String get surveys;
 }
