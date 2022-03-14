@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
@@ -16,23 +15,23 @@ class SurveysPresenterSpy extends Mock implements SurveysPresenter {}
 void main() {
   SurveysPresenterSpy presenter;
   StreamController<bool> isLoadingController;
-  StreamController<List<SurveyViewModel>> loadSurveysController;
+  StreamController<List<SurveyViewModel>> surveysController;
 
   void initStreams() {
     isLoadingController = StreamController<bool>();
-    loadSurveysController = StreamController<List<SurveyViewModel>>();
+    surveysController = StreamController<List<SurveyViewModel>>();
   }
 
   void closeStreams() {
     isLoadingController.close();
-    loadSurveysController.close();
+    surveysController.close();
   }
 
   void mockStreams() {
     when(presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
-    when(presenter.loadSurveysStream)
-        .thenAnswer((_) => loadSurveysController.stream);
+    when(presenter.surveysStream)
+        .thenAnswer((_) => surveysController.stream);
   }
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -93,11 +92,11 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
-  testWidgets("Should present error if loadSurveysStream fails",
+  testWidgets("Should present error if surveysStream fails",
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    loadSurveysController.addError(UIError.unexpected.description);
+    surveysController.addError(UIError.unexpected.description);
     await tester.pump();
 
     expect(find.text(R.translations.msgUnexpectedError), findsOneWidget);
@@ -105,11 +104,11 @@ void main() {
     expect(find.text('Question 1'), findsNothing);
   });
 
-  testWidgets("Should present list if loadSurveysStream succeeds",
+  testWidgets("Should present list if surveysStream succeeds",
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    loadSurveysController.add(makeSurveys());
+    surveysController.add(makeSurveys());
     await tester.pump();
 
     expect(find.text(R.translations.msgUnexpectedError), findsNothing);
@@ -124,7 +123,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    loadSurveysController.addError(UIError.unexpected.description);
+    surveysController.addError(UIError.unexpected.description);
     await tester.pump();
     await tester.tap(find.text(R.translations.reloadButtonText));
 
