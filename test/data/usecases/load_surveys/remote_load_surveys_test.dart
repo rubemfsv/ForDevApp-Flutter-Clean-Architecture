@@ -7,7 +7,7 @@ import 'package:hear_mobile/domain/helpers/helpers.dart';
 import 'package:hear_mobile/data/http/http.dart';
 import 'package:hear_mobile/data/usecases/usecases.dart';
 
-class HttpClientSpy extends Mock implements HttpClient<List<Map>> {}
+class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
   RemoteLoadSurveys sut;
