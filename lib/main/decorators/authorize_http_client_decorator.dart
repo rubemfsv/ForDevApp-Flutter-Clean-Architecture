@@ -29,6 +29,8 @@ class AuthorizeHttpClientDecorator implements HttpClient {
         body: body,
         headers: authorizedHeaders,
       );
+    } on HttpError {
+      rethrow;
     } catch (error) {
       throw HttpError.forbidden;
     }
