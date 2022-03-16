@@ -3,7 +3,7 @@ import 'package:meta/meta.dart';
 import '../../data/cache/cache.dart';
 import '../../data/http/http.dart';
 
-class AuthorizeHttpClientDecorator {
+class AuthorizeHttpClientDecorator implements HttpClient {
   final FetchSecureCacheStorage fetchSecureCacheStorage;
   final HttpClient decoratee;
 
@@ -12,7 +12,7 @@ class AuthorizeHttpClientDecorator {
     @required this.decoratee,
   });
 
-  Future<void> request({
+  Future<dynamic> request({
     @required String url,
     @required String method,
     Map body,
@@ -22,7 +22,7 @@ class AuthorizeHttpClientDecorator {
     final authorizedHeaders = headers ?? {}
       ..addAll({'x-access-token': token});
 
-    await decoratee.request(
+    return await decoratee.request(
       url: url,
       method: method,
       body: body,
