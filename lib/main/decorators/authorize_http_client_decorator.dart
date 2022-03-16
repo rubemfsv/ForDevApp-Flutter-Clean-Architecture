@@ -19,8 +19,9 @@ class AuthorizeHttpClientDecorator {
     Map headers,
   }) async {
     final token = await fetchSecureCacheStorage.fetchSecure('token');
-    final authorizedHeaders = {'x-access-token': token};
-    
+    final authorizedHeaders = headers ?? {}
+      ..addAll({'x-access-token': token});
+
     await decoratee.request(
       url: url,
       method: method,
