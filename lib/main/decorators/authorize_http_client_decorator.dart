@@ -7,7 +7,12 @@ class AuthorizeHttpClientDecorator {
 
   AuthorizeHttpClientDecorator({@required this.fetchSecureCacheStorage});
 
-  Future<void> request() async {
+  Future<void> request({
+    @required String url,
+    @required String method,
+    Map body,
+    Map headers,
+  }) async {
     await fetchSecureCacheStorage.fetchSecure('token');
   }
 }
