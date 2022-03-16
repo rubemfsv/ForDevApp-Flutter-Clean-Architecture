@@ -1,18 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'package:hear_mobile/data/cache/cache.dart';
-
-class AuthorizeHttpClientDecorator {
-  final FetchSecureCacheStorage fetchSecureCacheStorage;
-
-  AuthorizeHttpClientDecorator({@required this.fetchSecureCacheStorage});
-
-  Future<void> request() async {
-    await fetchSecureCacheStorage.fetchSecure('token');
-  }
-}
+import 'package:hear_mobile/main/decorators/decorators.dart';
 
 class FetchSecureCacheStorageSpy extends Mock
     implements FetchSecureCacheStorage {}
