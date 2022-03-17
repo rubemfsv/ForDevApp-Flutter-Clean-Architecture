@@ -116,4 +116,16 @@ void main() {
 
     expect(future, throwsA(DomainError.unexpected));
   });
+
+  test('Should throw UnexpectedError if cache is incomplete', () async {
+    mockFetch([
+      {
+        'date': faker.date.dateTime().toIso8601String(),
+        'didAnswer': faker.randomGenerator.boolean().toString(),
+      }
+    ]);
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
 }
