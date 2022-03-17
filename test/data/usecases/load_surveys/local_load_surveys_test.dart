@@ -154,5 +154,20 @@ void main() {
 
       verify(cacheStorage.fetch('surveys')).called(1);
     });
+
+    test('Should delete cache if it is invalid', () async {
+      mockFetch([
+        {
+          'id': faker.guid.guid(),
+          'question': faker.randomGenerator.string(10),
+          'date': 'invalid_date',
+          'didAnswer': faker.randomGenerator.boolean().toString(),
+        }
+      ]);
+
+      await sut.validate();
+
+      verify(cacheStorage.delete('surveys')).called(1);
+    });
   });
 }
