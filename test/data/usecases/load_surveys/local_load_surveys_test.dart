@@ -7,12 +7,12 @@ import 'package:hear_mobile/data/usecases/usecases.dart';
 import 'package:hear_mobile/domain/entities/entities.dart';
 import 'package:hear_mobile/domain/helpers/helpers.dart';
 
-class FetchCacheStorageSpy extends Mock implements FetchCacheStorage {}
+class CacheStorageSpy extends Mock implements CacheStorage {}
 
 void main() {
   group('load', () {
     LocalLoadSurveys sut;
-    FetchCacheStorageSpy fetchCacheStorage;
+    CacheStorageSpy fetchCacheStorage;
     List<Map> data;
 
     List<Map> mockValidData() => [
@@ -40,7 +40,7 @@ void main() {
     void mockFetchError() => mockFetchCall().thenThrow(Exception());
 
     setUp(() {
-      fetchCacheStorage = FetchCacheStorageSpy();
+      fetchCacheStorage = CacheStorageSpy();
       sut = LocalLoadSurveys(fetchCacheStorage: fetchCacheStorage);
       mockFetch(mockValidData());
     });

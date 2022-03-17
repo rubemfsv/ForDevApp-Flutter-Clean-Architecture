@@ -7,7 +7,7 @@ import '../../cache/cache.dart';
 import '../../models/models.dart';
 
 class LocalLoadSurveys implements LoadSurveys {
-  final FetchCacheStorage fetchCacheStorage;
+  final CacheStorage fetchCacheStorage;
 
   LocalLoadSurveys({@required this.fetchCacheStorage});
 
