@@ -1,11 +1,12 @@
 import 'package:faker/faker.dart';
-import 'package:hear_mobile/domain/helpers/domain_error.dart';
 import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
+import 'package:hear_mobile/data/cache/cache.dart';
 import 'package:hear_mobile/data/models/models.dart';
 import 'package:hear_mobile/domain/entities/entities.dart';
+import 'package:hear_mobile/domain/helpers/helpers.dart';
 
 class LocalLoadSurveys {
   final FetchCacheStorage fetchCacheStorage;
@@ -28,10 +29,6 @@ class LocalLoadSurveys {
 }
 
 class FetchCacheStorageSpy extends Mock implements FetchCacheStorage {}
-
-abstract class FetchCacheStorage {
-  Future<dynamic> fetch(String key);
-}
 
 void main() {
   LocalLoadSurveys sut;
