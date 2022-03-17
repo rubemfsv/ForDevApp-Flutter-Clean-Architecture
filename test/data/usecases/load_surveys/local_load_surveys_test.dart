@@ -1,4 +1,5 @@
 import 'package:faker/faker.dart';
+import 'package:hear_mobile/domain/helpers/domain_error.dart';
 import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -13,6 +14,8 @@ class LocalLoadSurveys {
 
   Future<List<SurveyEntity>> load() async {
     final data = await fetchCacheStorage.fetch('surveys');
+    
+    if (data.isEmpty) throw DomainError.unexpected;
 
     return data
         .map<SurveyEntity>((json) => LocalSurveyModel.fromJson(json).toEntity())
@@ -35,14 +38,14 @@ void main() {
         {
           'id': faker.guid.guid(),
           'question': faker.randomGenerator.string(10),
-          'date': '2020-07-20T00:00:00Z',
-          'didAnswer': 'false',
+          'date': faker.date.dateTime().toIso8601String(),
+          'didAnswer': faker.randomGenerator.boolean().toString(),
         },
         {
           'id': faker.guid.guid(),
           'question': faker.randomGenerator.string(10),
-          'date': '2019-02-02T00:00:00Z',
-          'didAnswer': 'true',
+          'date': faker.date.dateTime().toIso8601String(),
+          'didAnswer': faker.randomGenerator.boolean().toString(),
         }
       ];
 
@@ -72,13 +75,20 @@ void main() {
       SurveyEntity(
           id: data[0]['id'],
           question: data[0]['question'],
-          dateTime: DateTime.utc(2020, 7, 20),
-          didAnswer: false),
+          dateTime: DateTime.parse(data[0]['date']),
+          didAnswer: bool.fromEnvironment(data[0]['didAnswer'])),
       SurveyEntity(
           id: data[1]['id'],
           question: data[1]['question'],
-          dateTime: DateTime.utc(2019, 2, 2),
-          didAnswer: true),
+          dateTime: DateTime.parse(data[1]['date']),
+          didAnswer: bool.fromEnvironment(data[1]['didAnswer'])),
     ]);
+  });
+
+  test('Should throw UnexpectedError if cache is empty', () async {
+    mockFetch([]);
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
