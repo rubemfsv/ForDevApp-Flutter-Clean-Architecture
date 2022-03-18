@@ -1,3 +1,4 @@
+import 'package:hear_mobile/domain/helpers/domain_error.dart';
 import 'package:meta/meta.dart';
 
 import '../../domain/entities/entities.dart';
@@ -12,9 +13,16 @@ class RemoteLoadSurveysWithLocalFallback implements LoadSurveys {
       {@required this.remote, @required this.local});
 
   Future<List<SurveyEntity>> load() async {
-    final surveys = await remote.load();
-    await local.save(surveys);
+    try {
+      final surveys = await remote.load();
+      await local.save(surveys);
 
-    return surveys;
+      return surveys;
+    } catch (error) {
+      if (error == DomainError.accessDenied) rethrow;
+
+      await local.validate();
+      await local.load();
+    }
   }
 }

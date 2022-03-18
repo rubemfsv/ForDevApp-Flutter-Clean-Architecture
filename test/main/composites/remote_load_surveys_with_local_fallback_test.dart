@@ -74,4 +74,13 @@ void main() {
 
     expect(future, throwsA(DomainError.accessDenied));
   });
+
+  test('Should call local fetch on remote error', () async {
+    mockRemoteLoadError(DomainError.unexpected);
+
+    await sut.load();
+
+    verify(local.validate()).called(1);
+    verify(local.load()).called(1);
+  });
 }
