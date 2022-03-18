@@ -1,7 +1,7 @@
-import 'package:hear_mobile/domain/helpers/domain_error.dart';
 import 'package:meta/meta.dart';
 
 import '../../domain/entities/entities.dart';
+import '../../domain/helpers/domain_error.dart';
 import '../../data/usecases/usecases.dart';
 import '../../domain/usecases/usecases.dart';
 
