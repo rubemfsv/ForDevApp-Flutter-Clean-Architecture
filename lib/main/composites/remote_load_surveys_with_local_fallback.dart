@@ -1,14 +1,20 @@
 import 'package:meta/meta.dart';
 
-import 'package:hear_mobile/data/usecases/usecases.dart';
 import '../../domain/entities/entities.dart';
+import '../../data/usecases/usecases.dart';
+import '../../domain/usecases/usecases.dart';
 
-class RemoteLoadSurveysWithLocalFallback {
+class RemoteLoadSurveysWithLocalFallback implements LoadSurveys {
   RemoteLoadSurveys remote;
+  LocalLoadSurveys local;
 
-  RemoteLoadSurveysWithLocalFallback({@required this.remote});
+  RemoteLoadSurveysWithLocalFallback(
+      {@required this.remote, @required this.local});
 
-  Future<void> load() async {
-    await remote.load();
+  Future<List<SurveyEntity>> load() async {
+    final surveys = await remote.load();
+    await local.save(surveys);
+
+    return surveys;
   }
 }
