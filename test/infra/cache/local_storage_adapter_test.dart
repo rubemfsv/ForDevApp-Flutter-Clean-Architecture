@@ -19,6 +19,9 @@ void main() {
   void mockSaveError() =>
       when(localStorage.setItem(any, any)).thenThrow(Exception());
 
+  void mockFetchError() =>
+      when(localStorage.getItem(any)).thenThrow(Exception());
+
   setUp(() {
     localStorage = LocalStorageSpy();
     sut = LocalStorageAdapter(localStorage: localStorage);
@@ -72,6 +75,14 @@ void main() {
       await sut.fetch(key);
 
       verify(localStorage.getItem(key)).called(1);
+    });
+
+    test('Should throw if getItem throws', () async {
+      mockFetchError();
+
+      final future = sut.fetch(key);
+
+      expect(future, throwsA(TypeMatcher<Exception>()));
     });
   });
 }
