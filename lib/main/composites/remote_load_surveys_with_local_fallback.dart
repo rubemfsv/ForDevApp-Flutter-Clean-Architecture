@@ -22,7 +22,7 @@ class RemoteLoadSurveysWithLocalFallback implements LoadSurveys {
       if (error == DomainError.accessDenied) rethrow;
 
       await local.validate();
-      await local.load();
+      return await local.load();
     }
   }
 }
