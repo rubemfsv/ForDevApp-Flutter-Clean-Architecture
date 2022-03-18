@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 
 import 'package:hear_mobile/presentation/protocols/protocols.dart';
 import 'package:hear_mobile/validation/protocols/protocols.dart';
-import 'package:hear_mobile/validation/validators/validators.dart';
+import 'package:hear_mobile/main/composites/composites.dart';
 
 class FieldValidationSpy extends Mock implements FieldValidation {}
 
