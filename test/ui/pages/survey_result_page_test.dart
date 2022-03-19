@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:image_test_utils/image_test_utils.dart';
@@ -11,9 +12,25 @@ class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
 
 void main() {
   SurveyResultPresenterSpy presenter;
+  StreamController<bool> isLoadingController;
+
+  void initStreams() {
+    isLoadingController = StreamController<bool>();
+  }
+
+  void closeStreams() {
+    isLoadingController.close();
+  }
+
+  void mockStreams() {
+    when(presenter.isLoadingStream)
+        .thenAnswer((_) => isLoadingController.stream);
+  }
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = SurveyResultPresenterSpy();
+    initStreams();
+    mockStreams();
     final surveyResultPage = GetMaterialApp(
       initialRoute: '/survey_result/any_survey_id',
       getPages: [
@@ -22,15 +39,40 @@ void main() {
             page: () => SurveyResultPage(presenter))
       ],
     );
-    provideMockedNetworkImages(() async {
+    await provideMockedNetworkImages(() async {
       await tester.pumpWidget(surveyResultPage);
     });
   }
+
+  tearDown(() {
+    closeStreams();
+  });
 
   testWidgets('Should call LoadSurveyResult on page load',
       (WidgetTester tester) async {
     await loadPage(tester);
 
     verify(presenter.loadData()).called(1);
+  });
+
+  testWidgets("Should handle loading correctly", (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isLoadingController.add(true);
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+    isLoadingController.add(false);
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+
+    isLoadingController.add(true);
+    await tester.pump();
+    isLoadingController.add(null);
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 }
