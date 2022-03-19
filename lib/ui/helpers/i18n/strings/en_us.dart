@@ -23,5 +23,6 @@ class EnUs implements Translations {
   String get createAccount => "Create account";
   String get loading => "Loading...";
   String get login => "Login";
+  String get surveyResult => "Survey Result";
   String get surveys => "Surveys";
 }

@@ -21,5 +21,6 @@ abstract class Translations {
   String get createAccount;
   String get loading;
   String get login;
+  String get surveyResult;
   String get surveys;
 }
