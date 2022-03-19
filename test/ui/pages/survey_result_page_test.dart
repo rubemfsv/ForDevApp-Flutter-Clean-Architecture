@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
-import 'package:hear_mobile/ui/helpers/errors/ui_error.dart';
-import 'package:hear_mobile/ui/helpers/i18n/i18n.dart';
 import 'package:image_test_utils/image_test_utils.dart';
 import 'package:mockito/mockito.dart';
 
+import 'package:hear_mobile/ui/helpers/errors/ui_error.dart';
+import 'package:hear_mobile/ui/helpers/i18n/i18n.dart';
+import 'package:hear_mobile/ui/pages/survey_result/components/components.dart';
 import 'package:hear_mobile/ui/pages/pages.dart';
 
 class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
@@ -15,11 +16,11 @@ class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
 void main() {
   SurveyResultPresenterSpy presenter;
   StreamController<bool> isLoadingController;
-  StreamController<dynamic> surveyResultController;
+  StreamController<SurveyResultViewModel> surveyResultController;
 
   void initStreams() {
     isLoadingController = StreamController<bool>();
-    surveyResultController = StreamController<List<SurveyViewModel>>();
+    surveyResultController = StreamController<SurveyResultViewModel>();
   }
 
   void closeStreams() {
@@ -50,6 +51,17 @@ void main() {
       await tester.pumpWidget(surveyResultPage);
     });
   }
+
+  SurveyResultViewModel makeSurveyResult() =>
+      SurveyResultViewModel(surveyId: 'Any id', question: 'Question', answers: [
+        SurveyAnswerViewModel(
+            image: 'Image 0',
+            answer: 'Answer 0',
+            isCurrentAnswer: true,
+            percent: '60%'),
+        SurveyAnswerViewModel(
+            answer: 'Answer 1', isCurrentAnswer: false, percent: '40%'),
+      ]);
 
   tearDown(() {
     closeStreams();
@@ -92,6 +104,7 @@ void main() {
 
     expect(find.text(R.translations.msgUnexpectedError), findsOneWidget);
     expect(find.text(R.translations.reloadButtonText), findsOneWidget);
+    expect(find.text('Question'), findsNothing);
   });
 
   testWidgets('Should call LoadSurveyResult on reload button click',
@@ -103,5 +116,30 @@ void main() {
     await tester.tap(find.text(R.translations.reloadButtonText));
 
     verify(presenter.loadData()).called(2);
+  });
+
+  testWidgets("Should present valid data if surveyResultStream succeeds",
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    surveyResultController.add(makeSurveyResult());
+
+    await provideMockedNetworkImages(() async {
+      await tester.pump();
+    });
+
+    expect(find.text(R.translations.msgUnexpectedError), findsNothing);
+    expect(find.text(R.translations.reloadButtonText), findsNothing);
+    expect(find.text('Question'), findsOneWidget);
+    expect(find.text('Answer 0'), findsOneWidget);
+    expect(find.text('Answer 1'), findsOneWidget);
+    expect(find.text('60%'), findsOneWidget);
+    expect(find.text('40%'), findsOneWidget);
+    expect(find.byType(ActiveIcon), findsOneWidget);
+    expect(find.byType(DisabledIcon), findsOneWidget);
+
+    final image =
+        tester.widget<Image>(find.byType(Image)).image as NetworkImage;
+    expect(image.url, 'Image 0');
   });
 }
