@@ -83,7 +83,8 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
-  testWidgets("Should present error if surveyResultStream fails", (WidgetTester tester) async {
+  testWidgets("Should present error if surveyResultStream fails",
+      (WidgetTester tester) async {
     await loadPage(tester);
 
     surveyResultController.addError(UIError.unexpected.description);
@@ -91,5 +92,16 @@ void main() {
 
     expect(find.text(R.translations.msgUnexpectedError), findsOneWidget);
     expect(find.text(R.translations.reloadButtonText), findsOneWidget);
+  });
+
+  testWidgets('Should call LoadSurveyResult on reload button click',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    surveyResultController.addError(UIError.unexpected.description);
+    await tester.pump();
+    await tester.tap(find.text(R.translations.reloadButtonText));
+
+    verify(presenter.loadData()).called(2);
   });
 }
