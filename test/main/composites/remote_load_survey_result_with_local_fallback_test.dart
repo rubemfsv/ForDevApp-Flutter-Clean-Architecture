@@ -17,7 +17,7 @@ void main() {
   RemoteLoadSurveyResultSpy remote;
   LocalLoadSurveyResultSpy local;
   SurveyResultEntity remoteSurveyResult;
-  List<SurveyEntity> localSurveys;
+  SurveyResultEntity localSurveyResult;
   String surveyId;
 
   SurveyResultEntity mockSurveyResult() => SurveyResultEntity(
@@ -48,6 +48,12 @@ void main() {
 
   void mockRemoteLoadBySurveyError(DomainError error) =>
       mockRemoteLoadBySurveyCall().thenThrow(error);
+
+  PostExpectation mockLocalLoadCall() =>
+      when(local.loadBySurvey(surveyId: anyNamed('surveyId')));
+
+  void mockLocalLoadError() =>
+      mockLocalLoadCall().thenThrow(DomainError.unexpected);
 
   setUp(() {
     remote = RemoteLoadSurveyResultSpy();
@@ -90,5 +96,22 @@ void main() {
     await sut.loadBySurvey(surveyId: surveyId);
     verify(local.validate(surveyId)).called(1);
     verify(local.loadBySurvey(surveyId: surveyId)).called(1);
+  });
+
+  test('Should return remote surveys', () async {
+    mockRemoteLoadBySurveyError(DomainError.unexpected);
+
+    final surveyResult = await sut.loadBySurvey(surveyId: surveyId);
+
+    expect(surveyResult, localSurveyResult);
+  });
+
+  test('Should throw unexpected error if remote and local throws', () async {
+    mockRemoteLoadBySurveyError(DomainError.unexpected);
+    mockLocalLoadError();
+
+    final future = sut.loadBySurvey(surveyId: surveyId);
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
