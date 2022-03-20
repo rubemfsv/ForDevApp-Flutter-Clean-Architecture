@@ -38,20 +38,23 @@ void main() {
         ],
       );
 
-  PostExpectation mockRemoteLoadCall() =>
+  PostExpectation mockRemoteLoadBySurveyCall() =>
       when(remote.loadBySurvey(surveyId: anyNamed('surveyId')));
 
-  void mockRemoteLoad() {
+  void mockRemoteLoadBySurvey() {
     remoteSurveyResult = mockSurveyResult();
-    mockRemoteLoadCall().thenAnswer((_) async => remoteSurveyResult);
+    mockRemoteLoadBySurveyCall().thenAnswer((_) async => remoteSurveyResult);
   }
+
+  void mockRemoteLoadBySurveyError(DomainError error) =>
+      mockRemoteLoadBySurveyCall().thenThrow(error);
 
   setUp(() {
     remote = RemoteLoadSurveyResultSpy();
     local = LocalLoadSurveyResultSpy();
     sut = RemoteLoadSurveyResultWithLocalFallback(remote: remote, local: local);
     surveyId = faker.guid.guid();
-    mockRemoteLoad();
+    mockRemoteLoadBySurvey();
   });
 
   test('Should call remote loadBySurvey', () async {
@@ -71,5 +74,13 @@ void main() {
     final surveyResult = await sut.loadBySurvey(surveyId: surveyId);
 
     expect(surveyResult, remoteSurveyResult);
+  });
+
+  test('Should rethrow if remote load throws AccessDeniedError', () async {
+    mockRemoteLoadBySurveyError(DomainError.accessDenied);
+
+    final future = sut.loadBySurvey(surveyId: surveyId);
+
+    expect(future, throwsA(DomainError.accessDenied));
   });
 }
