@@ -15,12 +15,12 @@ class RemoteLoadSurveyResultWithLocalFallback implements LoadSurveyResult {
   Future<SurveyResultEntity> loadBySurvey({String surveyId}) async {
     try {
       final surveyResult = await remote.loadBySurvey(surveyId: surveyId);
-      await local.save(surveyId: surveyId, surveyResult: surveyResult);
+      await local.save(surveyResult: surveyResult);
 
       return surveyResult;
     } catch (error) {
       if (error == DomainError.accessDenied) rethrow;
-     
+
       await local.validate(surveyId);
       return await local.loadBySurvey(surveyId: surveyId);
     }
