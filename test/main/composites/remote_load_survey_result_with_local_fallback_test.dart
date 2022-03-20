@@ -66,4 +66,10 @@ void main() {
     verify(local.save(surveyId: surveyId, surveyResult: remoteSurveyResult))
         .called(1);
   });
+
+  test('Should return remote data', () async {
+    final surveyResult = await sut.loadBySurvey(surveyId: surveyId);
+
+    expect(surveyResult, remoteSurveyResult);
+  });
 }

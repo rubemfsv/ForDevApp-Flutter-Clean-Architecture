@@ -5,15 +5,17 @@ import '../../domain/helpers/domain_error.dart';
 import '../../data/usecases/usecases.dart';
 import '../../domain/usecases/usecases.dart';
 
-class RemoteLoadSurveyResultWithLocalFallback {
+class RemoteLoadSurveyResultWithLocalFallback implements LoadSurveyResult {
   RemoteLoadSurveyResult remote;
   LocalLoadSurveyResult local;
 
   RemoteLoadSurveyResultWithLocalFallback(
       {@required this.remote, @required this.local});
 
-  Future<void> loadBySurvey({String surveyId}) async {
+  Future<SurveyResultEntity> loadBySurvey({String surveyId}) async {
     final surveyResult = await remote.loadBySurvey(surveyId: surveyId);
     await local.save(surveyId: surveyId, surveyResult: surveyResult);
+
+    return surveyResult;
   }
 }
