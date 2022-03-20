@@ -68,12 +68,14 @@ void main() {
             SurveyAnswerEntity(
               image: data['answers'][0]['image'],
               answer: data['answers'][0]['answer'],
-              isCurrentAnswer: bool.fromEnvironment(data['answers'][0]['isCurrentAnswer']),
+              isCurrentAnswer:
+                  bool.fromEnvironment(data['answers'][0]['isCurrentAnswer']),
               percent: int.parse(data['answers'][0]['percent']),
             ),
             SurveyAnswerEntity(
               answer: data['answers'][1]['answer'],
-              isCurrentAnswer: bool.fromEnvironment(data['answers'][1]['isCurrentAnswer']),
+              isCurrentAnswer:
+                  bool.fromEnvironment(data['answers'][1]['isCurrentAnswer']),
               percent: int.parse(data['answers'][1]['percent']),
             ),
           ],
@@ -125,6 +127,88 @@ void main() {
       final future = sut.loadBySurvey(surveyId: surveyId);
 
       expect(future, throwsA(DomainError.unexpected));
+    });
+  });
+
+  group('validate', () {
+    LocalLoadSurveyResult sut;
+    CacheStorageSpy cacheStorage;
+    Map data;
+    String surveyId;
+
+    Map mockValidData() => {
+          'surveyId': faker.guid.guid(),
+          'question': faker.lorem.sentence(),
+          'answers': [
+            {
+              'image': faker.internet.httpUrl(),
+              'answer': faker.lorem.sentence(),
+              'isCurrentAnswer': faker.randomGenerator.boolean().toString(),
+              'percent': faker.randomGenerator.integer(100).toString(),
+            },
+            {
+              'answer': faker.lorem.sentence(),
+              'isCurrentAnswer': faker.randomGenerator.boolean().toString(),
+              'percent': faker.randomGenerator.integer(100).toString(),
+            }
+          ]
+        };
+
+    PostExpectation mockFetchCall() => when(cacheStorage.fetch(any));
+
+    void mockFetch(Map json) {
+      data = json;
+      mockFetchCall().thenAnswer((_) async => data);
+    }
+
+    void mockFetchError() => mockFetchCall().thenThrow(Exception());
+
+    setUp(() {
+      cacheStorage = CacheStorageSpy();
+      sut = LocalLoadSurveyResult(cacheStorage: cacheStorage);
+      surveyId = faker.guid.guid();
+      mockFetch(mockValidData());
+    });
+
+    test('Should call cacheStorage with correct key', () async {
+      await sut.validate(surveyId);
+
+      verify(cacheStorage.fetch('survey_result/$surveyId')).called(1);
+    });
+
+    test('Should delete cache if it is invalid', () async {
+      mockFetch({
+        'surveyId': faker.guid.guid(),
+        'question': faker.lorem.sentence(),
+        'answers': [
+          {
+            'image': faker.internet.httpUrl(),
+            'answer': faker.lorem.sentence(),
+            'isCurrentAnswer': 'invalid bool',
+            'percent': 'invalid int'
+          }
+        ]
+      });
+
+      await sut.validate(surveyId);
+
+      verify(cacheStorage.delete('survey_result/$surveyId')).called(1);
+    });
+
+    test('Should delete cache if it is incomplete', () async {
+      mockFetch({'surveyId': faker.guid.guid()});
+
+      await sut.validate(surveyId);
+
+      verify(cacheStorage.delete('survey_result/$surveyId')).called(1);
+    });
+
+    test('Should delete cache if cache throws', () async {
+      mockFetchError();
+
+      await sut.validate(surveyId);
+
+      verify(cacheStorage.delete('survey_result/$surveyId')).called(1);
     });
   });
 }
