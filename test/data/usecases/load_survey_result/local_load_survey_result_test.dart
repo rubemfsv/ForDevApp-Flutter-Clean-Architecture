@@ -211,4 +211,76 @@ void main() {
       verify(cacheStorage.delete('survey_result/$surveyId')).called(1);
     });
   });
+
+  group('save', () {
+    LocalLoadSurveyResult sut;
+    CacheStorageSpy cacheStorage;
+    SurveyResultEntity surveyResult;
+    String surveyId;
+
+    SurveyResultEntity mockSurveyResult() => SurveyResultEntity(
+            surveyId: faker.guid.guid(),
+            question: faker.lorem.sentence(),
+            answers: [
+              SurveyAnswerEntity(
+                image: faker.internet.httpUrl(),
+                answer: faker.lorem.sentence(),
+                isCurrentAnswer: faker.randomGenerator.boolean(),
+                percent: faker.randomGenerator.integer(100),
+              ),
+              SurveyAnswerEntity(
+                answer: faker.lorem.sentence(),
+                isCurrentAnswer: faker.randomGenerator.boolean(),
+                percent: faker.randomGenerator.integer(100),
+              ),
+            ]);
+
+    PostExpectation mockSaveCall() =>
+        when(cacheStorage.save(key: anyNamed('key'), value: anyNamed('value')));
+
+    void mockSaveError() => mockSaveCall().thenThrow(Exception());
+
+    setUp(() {
+      cacheStorage = CacheStorageSpy();
+      sut = LocalLoadSurveyResult(cacheStorage: cacheStorage);
+      surveyId = faker.guid.guid();
+      surveyResult = mockSurveyResult();
+    });
+
+    test('Should call cacheStorage with correct values', () async {
+      Map json = {
+        'surveyId': surveyResult.surveyId,
+        'question': surveyResult.question,
+        'answers': [
+          {
+            'image': surveyResult.answers[0].image,
+            'answer': surveyResult.answers[0].answer,
+            'percent': surveyResult.answers[0].percent.toString(),
+            'isCurrentAnswer':
+                surveyResult.answers[0].isCurrentAnswer.toString()
+          },
+          {
+            'image': null,
+            'answer': surveyResult.answers[1].answer,
+            'percent': surveyResult.answers[1].percent.toString(),
+            'isCurrentAnswer':
+                surveyResult.answers[1].isCurrentAnswer.toString()
+          }
+        ],
+      };
+
+      await sut.save(surveyId: surveyId, surveyResult: surveyResult);
+
+      verify(cacheStorage.save(key: 'survey_result/$surveyId', value: json))
+          .called(1);
+    });
+
+    test('Should throw unexpected error if save throws', () async {
+      mockSaveError();
+
+      final future = sut.save(surveyId: surveyId, surveyResult: surveyResult);
+
+      expect(future, throwsA(DomainError.unexpected));
+    });
+  });
 }
