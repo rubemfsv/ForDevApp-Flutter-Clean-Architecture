@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import '../../../ui/helpers/errors/ui_error.dart';
 
-mixin PasswordErrorManager {
+mixin PasswordErrorManager on GetxController {
   final _passwordError = Rx<UIError>();
 
   Stream<UIError> get passwordErrorStream => _passwordError.stream;

@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import '../../../ui/helpers/errors/ui_error.dart';
 
-mixin EmailErrorManager {
+mixin EmailErrorManager on GetxController {
   final _emailError = Rx<UIError>();
 
   Stream<UIError> get emailErrorStream => _emailError.stream;

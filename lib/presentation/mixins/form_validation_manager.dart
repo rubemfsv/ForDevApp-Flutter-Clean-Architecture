@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-mixin FormValidationManager {
+mixin FormValidationManager on GetxController {
   final _isFormValid = false.obs;
 
   Stream<bool> get isFormValidStream => _isFormValid.stream;
