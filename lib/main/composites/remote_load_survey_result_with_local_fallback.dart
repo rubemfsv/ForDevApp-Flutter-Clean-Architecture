@@ -20,8 +20,9 @@ class RemoteLoadSurveyResultWithLocalFallback implements LoadSurveyResult {
       return surveyResult;
     } catch (error) {
       if (error == DomainError.accessDenied) rethrow;
-
-      return null;
+     
+      await local.validate(surveyId);
+      return await local.loadBySurvey(surveyId: surveyId);
     }
   }
 }
