@@ -5,6 +5,6 @@ import '../factories.dart';
 LoadSurveyResult makeRemoteLoadSurveyResult(String surveyId) {
   return RemoteLoadSurveyResult(
     httpClient: makeAuthorizeHttpClientDecorator(),
-    url: makeApiUrl('survey_result/$surveyId/results'),
+    url: makeApiUrl('surveys/$surveyId/results'),
   );
 }
