@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
 import 'package:image_test_utils/image_test_utils.dart';
 import 'package:mockito/mockito.dart';
 
-import 'package:hear_mobile/ui/helpers/errors/ui_error.dart';
-import 'package:hear_mobile/ui/helpers/i18n/i18n.dart';
+import 'package:hear_mobile/ui/helpers/helpers.dart';
 import 'package:hear_mobile/ui/pages/survey_result/components/components.dart';
 import 'package:hear_mobile/ui/pages/pages.dart';
+import '../helpers/helpers.dart';
 
 class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
 
@@ -44,17 +43,12 @@ void main() {
     presenter = SurveyResultPresenterSpy();
     initStreams();
     mockStreams();
-    final surveyResultPage = GetMaterialApp(
-      initialRoute: '/survey_result/any_survey_id',
-      getPages: [
-        GetPage(
-            name: '/survey_result/:survey_id',
-            page: () => SurveyResultPage(presenter)),
-        GetPage(name: '/login', page: () => Scaffold(body: Text('fake login'))),
-      ],
-    );
+
     await provideMockedNetworkImages(() async {
-      await tester.pumpWidget(surveyResultPage);
+      await tester.pumpWidget(makePage(
+        initialRoute: '/survey_result/any_survey_id',
+        page: () => SurveyResultPage(presenter),
+      ));
     });
   }
 
@@ -155,7 +149,7 @@ void main() {
     isSessionExpiredController.add(true);
     await tester.pumpAndSettle();
 
-    expect(Get.currentRoute, '/login');
+    expect(currentRoute, '/login');
 
     expect(find.text('fake login'), findsOneWidget);
   });
@@ -165,11 +159,11 @@ void main() {
 
     isSessionExpiredController.add(false);
     await tester.pump();
-    expect(Get.currentRoute, '/survey_result/any_survey_id');
+    expect(currentRoute, '/survey_result/any_survey_id');
 
     isSessionExpiredController.add(null);
     await tester.pump();
-    expect(Get.currentRoute, '/survey_result/any_survey_id');
+    expect(currentRoute, '/survey_result/any_survey_id');
   });
 
   testWidgets('Should call SaveSurveyResult on list item click',
