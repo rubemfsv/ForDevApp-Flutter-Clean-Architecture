@@ -135,6 +135,26 @@ void main() {
   });
 
   group('save', () {
+    SurveyResultViewModel mapToViewModel(SurveyResultEntity entity) {
+      return SurveyResultViewModel(
+        surveyId: entity.surveyId,
+        question: entity.question,
+        answers: [
+          SurveyAnswerViewModel(
+            image: entity.answers[0].image,
+            answer: entity.answers[0].answer,
+            isCurrentAnswer: entity.answers[0].isCurrentAnswer,
+            percent: '${entity.answers[0].percent}%',
+          ),
+          SurveyAnswerViewModel(
+            answer: entity.answers[1].answer,
+            isCurrentAnswer: entity.answers[1].isCurrentAnswer,
+            percent: '${entity.answers[1].percent}%',
+          )
+        ],
+      );
+    }
+
     test('Should call LoadSurveyResult on save', () async {
       await sut.save(answer: answer);
 
@@ -143,27 +163,14 @@ void main() {
 
     test('Should emit correct events on success', () async {
       expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
-      sut.surveyResultStream.listen(expectAsync1((result) => expect(
-            result,
-            SurveyResultViewModel(
-              surveyId: saveResult.surveyId,
-              question: saveResult.question,
-              answers: [
-                SurveyAnswerViewModel(
-                  image: saveResult.answers[0].image,
-                  answer: saveResult.answers[0].answer,
-                  isCurrentAnswer: saveResult.answers[0].isCurrentAnswer,
-                  percent: '${saveResult.answers[0].percent}%',
-                ),
-                SurveyAnswerViewModel(
-                  answer: saveResult.answers[1].answer,
-                  isCurrentAnswer: saveResult.answers[1].isCurrentAnswer,
-                  percent: '${saveResult.answers[1].percent}%',
-                )
-              ],
-            ),
-          )));
+      expectLater(
+          sut.surveyResultStream,
+          emitsInOrder([
+            mapToViewModel(loadResult),
+            mapToViewModel(saveResult),
+          ]));
 
+      await sut.loadData();
       await sut.save(answer: answer);
     });
 
