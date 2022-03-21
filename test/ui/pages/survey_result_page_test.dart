@@ -181,8 +181,22 @@ void main() {
     await provideMockedNetworkImages(() async {
       await tester.pump();
     });
+    await tester.tap(find.text('Answer 1'));
+
+    verify(presenter.save(answer: 'Answer 1')).called(1);
+  });
+
+  testWidgets('Should not call SaveSurveyResult on current answer click',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    surveyResultController.add(makeSurveyResult());
+
+    await provideMockedNetworkImages(() async {
+      await tester.pump();
+    });
     await tester.tap(find.text('Answer 0'));
 
-    verify(presenter.save(answer: 'Answer 0')).called(1);
+    verifyNever(presenter.save(answer: 'Answer 0'));
   });
 }
