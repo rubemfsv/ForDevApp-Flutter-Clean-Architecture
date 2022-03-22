@@ -7,6 +7,8 @@ import 'package:hear_mobile/data/usecases/usecases.dart';
 import 'package:hear_mobile/domain/entities/entities.dart';
 import 'package:hear_mobile/main/composites/composites.dart';
 
+import '../../mocks/mocks.dart';
+
 class RemoteLoadSurveyResultSpy extends Mock implements RemoteLoadSurveyResult {
 }
 
@@ -20,29 +22,11 @@ void main() {
   SurveyResultEntity localSurveyResult;
   String surveyId;
 
-  SurveyResultEntity mockSurveyResult() => SurveyResultEntity(
-        surveyId: faker.guid.guid(),
-        question: faker.lorem.sentence(),
-        answers: [
-          SurveyAnswerEntity(
-            image: faker.internet.httpUrl(),
-            answer: faker.lorem.sentence(),
-            isCurrentAnswer: faker.randomGenerator.boolean(),
-            percent: faker.randomGenerator.integer(100),
-          ),
-          SurveyAnswerEntity(
-            answer: faker.lorem.sentence(),
-            isCurrentAnswer: faker.randomGenerator.boolean(),
-            percent: faker.randomGenerator.integer(100),
-          ),
-        ],
-      );
-
   PostExpectation mockRemoteLoadBySurveyCall() =>
       when(remote.loadBySurvey(surveyId: anyNamed('surveyId')));
 
   void mockRemoteLoadBySurvey() {
-    remoteSurveyResult = mockSurveyResult();
+    remoteSurveyResult = FakeSurveyResultFactory.makeEntity();
     mockRemoteLoadBySurveyCall().thenAnswer((_) async => remoteSurveyResult);
   }
 
@@ -51,6 +35,11 @@ void main() {
 
   PostExpectation mockLocalLoadCall() =>
       when(local.loadBySurvey(surveyId: anyNamed('surveyId')));
+
+  void mockLocalLoad() {
+    localSurveyResult = FakeSurveyResultFactory.makeEntity();
+    mockLocalLoadCall().thenAnswer((_) async => localSurveyResult);
+  }
 
   void mockLocalLoadError() =>
       mockLocalLoadCall().thenThrow(DomainError.unexpected);
@@ -61,6 +50,7 @@ void main() {
     sut = RemoteLoadSurveyResultWithLocalFallback(remote: remote, local: local);
     surveyId = faker.guid.guid();
     mockRemoteLoadBySurvey();
+    mockLocalLoad();
   });
 
   test('Should call remote loadBySurvey', () async {

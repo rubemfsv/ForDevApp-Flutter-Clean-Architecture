@@ -7,6 +7,8 @@ import 'package:mockito/mockito.dart';
 
 import 'package:hear_mobile/ui/helpers/helpers.dart';
 import 'package:hear_mobile/ui/pages/pages.dart';
+import '../../mocks/mocks.dart';
+
 import '../helpers/helpers.dart';
 
 class SurveysPresenterSpy extends Mock implements SurveysPresenter {}
@@ -54,21 +56,6 @@ void main() {
       page: () => SurveysPage(presenter),
     ));
   }
-
-  List<SurveyViewModel> makeSurveys() => [
-        SurveyViewModel(
-          id: '1',
-          question: 'Question 1',
-          date: 'Date 1',
-          didAnswer: true,
-        ),
-        SurveyViewModel(
-          id: '2',
-          question: 'Question 2',
-          date: 'Date 2',
-          didAnswer: false,
-        ),
-      ];
 
   tearDown(() {
     closeStreams();
@@ -128,7 +115,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    surveysController.add(makeSurveys());
+    surveysController.add(FakeSurveysFactory.makeViewModelList());
     await tester.pump();
 
     expect(find.text(R.translations.msgUnexpectedError), findsNothing);
@@ -154,7 +141,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    surveysController.add(makeSurveys());
+    surveysController.add(FakeSurveysFactory.makeViewModelList());
     await tester.pump();
 
     await tester.tap(find.text('Question 1'));

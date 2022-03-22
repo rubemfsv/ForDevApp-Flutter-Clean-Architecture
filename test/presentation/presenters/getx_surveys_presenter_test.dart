@@ -1,4 +1,3 @@
-import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -9,27 +8,14 @@ import 'package:hear_mobile/presentation/presenters/presenters.dart';
 import 'package:hear_mobile/ui/helpers/helpers.dart';
 import 'package:hear_mobile/ui/pages/pages.dart';
 
+import '../../mocks/mocks.dart';
+
 class LoadSurveysSpy extends Mock implements LoadSurveys {}
 
 void main() {
   LoadSurveysSpy loadSurveys;
   GetxSurveysPresenter sut;
   List<SurveyEntity> surveys;
-
-  List<SurveyEntity> mockValidData() => [
-        SurveyEntity(
-          id: faker.guid.guid(),
-          question: faker.randomGenerator.string(50),
-          didAnswer: faker.randomGenerator.boolean(),
-          dateTime: DateTime(2020, 2, 20),
-        ),
-        SurveyEntity(
-          id: faker.guid.guid(),
-          question: faker.randomGenerator.string(50),
-          didAnswer: faker.randomGenerator.boolean(),
-          dateTime: DateTime(2018, 10, 3),
-        )
-      ];
 
   PostExpectation mockLoadSurveysCall() => when(loadSurveys.load());
 
@@ -47,7 +33,7 @@ void main() {
   setUp(() {
     loadSurveys = LoadSurveysSpy();
     sut = GetxSurveysPresenter(loadSurveys: loadSurveys);
-    mockLoadSurveys(mockValidData());
+    mockLoadSurveys(FakeSurveysFactory.makeEntities());
   });
 
   test('Should call LoadSurveys on loadData', () async {
@@ -58,17 +44,18 @@ void main() {
 
   test('Should emit correct events on success', () async {
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+
     sut.surveysStream.listen(expectAsync1((surveys) => expect(surveys, [
           SurveyViewModel(
             id: surveys[0].id,
             question: surveys[0].question,
-            date: '20 Fev 2020',
+            date: surveys[0].date,
             didAnswer: surveys[0].didAnswer,
           ),
           SurveyViewModel(
             id: surveys[1].id,
             question: surveys[1].question,
-            date: '03 Out 2018',
+            date: surveys[1].date,
             didAnswer: surveys[1].didAnswer,
           )
         ])));

@@ -8,6 +8,8 @@ import 'package:hear_mobile/domain/usecases/usecases.dart';
 import 'package:hear_mobile/data/http/http.dart';
 import 'package:hear_mobile/data/usecases/usecases.dart';
 
+import '../../../mocks/mocks.dart';
+
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
@@ -15,8 +17,7 @@ void main() {
   HttpClientSpy httpClient;
   String url;
   AuthenticationParams params;
-  Map mockValidData() =>
-      {'accessToken': faker.guid.guid(), 'name': faker.person.name()};
+  Map apiResult;
 
   PostExpectation mockRequest() => when(httpClient.request(
         url: anyNamed('url'),
@@ -25,6 +26,7 @@ void main() {
       ));
 
   void mockHttpData(Map data) {
+    apiResult = data;
     mockRequest().thenAnswer((_) async => data);
   }
 
@@ -36,9 +38,8 @@ void main() {
     httpClient = HttpClientSpy();
     url = faker.internet.httpUrl();
     sut = RemoteAuthentication(httpClient: httpClient, url: url);
-    params = AuthenticationParams(
-        email: faker.internet.email(), password: faker.internet.password());
-    mockHttpData(mockValidData());
+    params = FakeParamsFactory.makeAuthenticationParams();
+    mockHttpData(FakeAccountFactory.makeApiJson());
   });
   test('Should call HttpClient with correct values', () async {
     await sut.auth(params);
@@ -50,18 +51,15 @@ void main() {
   });
 
   test('Should return an Account if HpptClient returns 200', () async {
-    final validData = mockValidData();
-    mockHttpData(validData);
-
     final account = await sut.auth(params);
 
-    expect(account.token, validData['accessToken']);
+    expect(account.token, apiResult['accessToken']);
   });
 
   test(
       'Should throw UnexpectedError if HpptClient returns 200 with invalid data',
       () async {
-    mockHttpData({'invalid_key': 'invalid_value'});
+    mockHttpData(SharedItemsFactory.makeInvalidJson());
 
     final future = sut.auth(params);
 
