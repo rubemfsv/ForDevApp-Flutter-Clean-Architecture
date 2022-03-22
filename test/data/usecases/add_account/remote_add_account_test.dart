@@ -7,6 +7,7 @@ import 'package:hear_mobile/domain/usecases/usecases.dart';
 
 import 'package:hear_mobile/data/http/http.dart';
 import 'package:hear_mobile/data/usecases/usecases.dart';
+import '../../../mocks/mocks.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
 
@@ -14,12 +15,8 @@ void main() {
   RemoteAddAccount sut;
   HttpClientSpy httpClient;
   String url;
-  String password;
   AddAccountParams params;
-  Map mockValidData() => {
-        'accessToken': faker.guid.guid(),
-        'name': faker.person.name(),
-      };
+  Map apiResult;
 
   PostExpectation mockRequest() => when(httpClient.request(
         url: anyNamed('url'),
@@ -28,6 +25,7 @@ void main() {
       ));
 
   void mockHttpData(Map data) {
+    apiResult = data;
     mockRequest().thenAnswer((_) async => data);
   }
 
@@ -39,14 +37,8 @@ void main() {
     httpClient = HttpClientSpy();
     url = faker.internet.httpUrl();
     sut = RemoteAddAccount(httpClient: httpClient, url: url);
-    password = faker.internet.password();
-    params = AddAccountParams(
-      name: faker.person.firstName(),
-      email: faker.internet.email(),
-      password: password,
-      passwordConfirmation: password,
-    );
-    mockHttpData(mockValidData());
+    params = FakeParamsFactory.makeAddAccountParams();
+    mockHttpData(FakeAccountFactory.makeApiJson());
   });
   test('Should call HttpClient with correct values', () async {
     await sut.add(params);
@@ -60,18 +52,15 @@ void main() {
   });
 
   test('Should return an Account if HpptClient returns 200', () async {
-    final validData = mockValidData();
-    mockHttpData(validData);
-
     final account = await sut.add(params);
 
-    expect(account.token, validData['accessToken']);
+    expect(account.token, apiResult['accessToken']);
   });
 
   test(
       'Should throw UnexpectedError if HpptClient returns 200 with invalid data',
       () async {
-    mockHttpData({'invalid_key': 'invalid_value'});
+    mockHttpData(SharedItemsFactory.makeInvalidJson());
 
     final future = sut.add(params);
 

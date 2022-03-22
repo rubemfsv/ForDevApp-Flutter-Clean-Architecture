@@ -8,6 +8,8 @@ import 'package:hear_mobile/ui/pages/pages.dart';
 import 'package:hear_mobile/ui/helpers/helpers.dart';
 import '../helpers/helpers.dart';
 
+import '../../mocks/mocks.dart';
+
 class LoginPresenterSpy extends Mock implements LoginPresenter {}
 
 void main() {
