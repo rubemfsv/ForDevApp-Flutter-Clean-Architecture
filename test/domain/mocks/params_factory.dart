@@ -1,16 +1,15 @@
 import 'package:faker/faker.dart';
-import 'package:hear_mobile/domain/usecases/usecases.dart';
+import '../../../lib/domain/usecases/usecases.dart';
 
-class FakeParamsFactory {
-  static AddAccountParams makeAddAccountParams() => AddAccountParams(
+class ParamsFactory {
+  static AddAccountParams makeAddAccount() => AddAccountParams(
         name: faker.person.firstName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
         passwordConfirmation: faker.internet.password(),
       );
 
-  static AuthenticationParams makeAuthenticationParams() =>
-      AuthenticationParams(
+  static AuthenticationParams makeAuthentication() => AuthenticationParams(
         email: faker.internet.email(),
         password: faker.internet.password(),
       );

@@ -4,9 +4,9 @@ import './components.dart';
 
 class SurveyResult extends StatelessWidget {
   final SurveyResultViewModel viewModel;
-  final void Function({@required String answer}) onSave;
+  final void Function({required String answer}) onSave;
 
-  SurveyResult({@required this.viewModel, @required this.onSave});
+  SurveyResult({required this.viewModel, required this.onSave});
 
   @override
   Widget build(BuildContext context) {

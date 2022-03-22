@@ -1,25 +1,25 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import 'package:hear_mobile/domain/helpers/helpers.dart';
-import 'package:hear_mobile/domain/entities/entities.dart';
-import 'package:hear_mobile/data/cache/cache.dart';
-import 'package:hear_mobile/data/usecases/usecases.dart';
+import '../../../../lib/domain/helpers/helpers.dart';
+import '../../../../lib/domain/entities/entities.dart';
+import '../../../../lib/data/cache/cache.dart';
+import '../../../../lib/data/usecases/usecases.dart';
 
 class SaveSecureCacheStorageSpy extends Mock implements SaveSecureCacheStorage {
 }
 
 void main() {
-  SaveSecureCacheStorageSpy saveSecureCacheStorage;
-  LocalSaveCurrentAccount sut;
-  AccountEntity account;
+  late SaveSecureCacheStorageSpy saveSecureCacheStorage;
+  late LocalSaveCurrentAccount sut;
+  late AccountEntity account;
 
   void mockError() {
-    when(saveSecureCacheStorage.save(
-      key: anyNamed('key'),
-      value: anyNamed('value'),
-    )).thenThrow(Exception());
+    when(() => saveSecureCacheStorage.save(
+          key: any(named: 'key'),
+          value: any(named: 'value'),
+        )).thenThrow(Exception());
   }
 
   setUp(() {
@@ -32,7 +32,7 @@ void main() {
     await sut.save(account);
 
     verify(
-        saveSecureCacheStorage.save(key: 'token', value: account.token));
+        () => saveSecureCacheStorage.save(key: 'token', value: account.token));
   });
 
   test('Should throw unexpectedError if SaveSecureCacheStorage throws', () {

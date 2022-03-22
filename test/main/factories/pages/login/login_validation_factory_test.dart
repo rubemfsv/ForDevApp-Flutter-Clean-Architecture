@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import 'package:hear_mobile/main/factories/factories.dart';
-import 'package:hear_mobile/validation/validators/validators.dart';
+import '../../../../../lib/main/factories/factories.dart';
+import '../../../../../lib/validation/validators/validators.dart';
 
 void main() {
   test('Should return the correct validations', () {

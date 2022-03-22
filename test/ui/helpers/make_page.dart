@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 Widget makePage(
-    {@required String initialRoute, @required Widget Function() page}) {
+    {required String initialRoute, required Widget Function() page}) {
   final routeObserver = Get.put<RouteObserver>(RouteObserver<PageRoute>());
   final getPages = [
     GetPage(name: initialRoute, page: page),

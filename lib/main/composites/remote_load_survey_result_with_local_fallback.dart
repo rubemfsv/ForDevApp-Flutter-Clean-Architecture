@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 import '../../domain/entities/entities.dart';
 import '../../domain/helpers/domain_error.dart';
 import '../../data/usecases/usecases.dart';
@@ -10,9 +8,9 @@ class RemoteLoadSurveyResultWithLocalFallback implements LoadSurveyResult {
   LocalLoadSurveyResult local;
 
   RemoteLoadSurveyResultWithLocalFallback(
-      {@required this.remote, @required this.local});
+      {required this.remote, required this.local});
 
-  Future<SurveyResultEntity> loadBySurvey({String surveyId}) async {
+  Future<SurveyResultEntity> loadBySurvey({required String surveyId}) async {
     try {
       final surveyResult = await remote.loadBySurvey(surveyId: surveyId);
       await local.save(surveyResult: surveyResult);

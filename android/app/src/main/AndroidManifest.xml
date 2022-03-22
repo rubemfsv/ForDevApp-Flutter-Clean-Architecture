@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.hear_mobile">
+    package="com.example.fordev">
    <application
-        android:label="hear_mobile"
+        android:label="fordev"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

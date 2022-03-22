@@ -1,28 +1,28 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import 'package:hear_mobile/domain/helpers/helpers.dart';
-import 'package:hear_mobile/domain/usecases/usecases.dart';
+import '../../../../lib/domain/helpers/helpers.dart';
+import '../../../../lib/domain/usecases/usecases.dart';
 
-import 'package:hear_mobile/data/http/http.dart';
-import 'package:hear_mobile/data/usecases/usecases.dart';
+import '../../../../lib/data/http/http.dart';
+import '../../../../lib/data/usecases/usecases.dart';
 
 import '../../../mocks/mocks.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
-  RemoteAuthentication sut;
-  HttpClientSpy httpClient;
-  String url;
-  AuthenticationParams params;
-  Map apiResult;
+  late RemoteAuthentication sut;
+  late HttpClientSpy httpClient;
+  late String url;
+  late AuthenticationParams params;
+  late Map apiResult;
 
-  PostExpectation mockRequest() => when(httpClient.request(
-        url: anyNamed('url'),
-        method: anyNamed('method'),
-        body: anyNamed('body'),
+  When mockRequest() => when(() => httpClient.request(
+        url: any(named: 'url'),
+        method: any(named: 'method'),
+        body: any(named: 'body'),
       ));
 
   void mockHttpData(Map data) {
@@ -38,13 +38,13 @@ void main() {
     httpClient = HttpClientSpy();
     url = faker.internet.httpUrl();
     sut = RemoteAuthentication(httpClient: httpClient, url: url);
-    params = FakeParamsFactory.makeAuthenticationParams();
-    mockHttpData(FakeAccountFactory.makeApiJson());
+    params = ParamsFactory.makeAuthentication();
+    mockHttpData(ApiFactory.makeAccountJson());
   });
   test('Should call HttpClient with correct values', () async {
     await sut.auth(params);
 
-    verify(httpClient.request(
+    verify(() => httpClient.request(
         url: url,
         method: 'post',
         body: {'email': params.email, 'password': params.password}));
@@ -59,7 +59,7 @@ void main() {
   test(
       'Should throw UnexpectedError if HpptClient returns 200 with invalid data',
       () async {
-    mockHttpData(SharedItemsFactory.makeInvalidJson());
+    mockHttpData(ApiFactory.makeInvalidJson());
 
     final future = sut.auth(params);
 

@@ -30,7 +30,7 @@ class SurveyAnswer extends StatelessWidget {
         children.insert(
             0,
             Image.network(
-              viewModel.image,
+              viewModel.image!,
               width: 40,
             ));
       }

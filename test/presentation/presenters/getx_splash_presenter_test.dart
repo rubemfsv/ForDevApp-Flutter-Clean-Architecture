@@ -1,39 +1,38 @@
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import 'package:hear_mobile/domain/entities/entities.dart';
-import 'package:hear_mobile/domain/usecases/usecases.dart';
-import 'package:hear_mobile/presentation/presenters/presenters.dart';
+import '../../../lib/domain/entities/entities.dart';
+import '../../../lib/domain/usecases/usecases.dart';
+import '../../../lib/presentation/presenters/presenters.dart';
 
 import '../../mocks/mocks.dart';
 
 class LoadCurrentAccountSpy extends Mock implements LoadCurrentAccount {}
 
 void main() {
-  GetxSplashPresenter sut;
-  LoadCurrentAccountSpy loadCurrentAccount;
+  late GetxSplashPresenter sut;
+  late LoadCurrentAccountSpy loadCurrentAccount;
 
-  PostExpectation mockLoadCurrentAccountCall() =>
-      when(loadCurrentAccount.load());
+  When mockLoadCurrentAccountCall() => when(() => loadCurrentAccount.load());
 
-  void mockLoadCurrentAccount({AccountEntity account}) {
+  void mockLoadCurrentAccount({required AccountEntity account}) {
     mockLoadCurrentAccountCall().thenAnswer((_) async => account);
   }
 
-  void mockLoadCurrentError({AccountEntity account}) {
+  void mockLoadCurrentError() {
     mockLoadCurrentAccountCall().thenThrow(Exception());
   }
 
   setUp(() {
     loadCurrentAccount = LoadCurrentAccountSpy();
     sut = GetxSplashPresenter(loadCurrentAccount: loadCurrentAccount);
-    mockLoadCurrentAccount(account: FakeAccountFactory.makeEntity());
+    mockLoadCurrentAccount(account: EntityFactory.makeAccount());
   });
 
   test('Should call LoadCurrentAccount', () async {
     await sut.checkAccount(durationInSeconds: 0);
 
-    verify(loadCurrentAccount.load()).called(1);
+    verify(() => loadCurrentAccount.load()).called(1);
   });
 
   test('Should go to surveys page on success', () async {
@@ -43,27 +42,7 @@ void main() {
 
     await sut.checkAccount(durationInSeconds: 0);
   });
-
-  test('Should go to login page on null result', () async {
-    mockLoadCurrentAccount(account: null);
-
-    sut.navigateToStream.listen(expectAsync1(
-      (page) => expect(page, '/login'),
-    ));
-
-    await sut.checkAccount(durationInSeconds: 0);
-  });
-
-  test('Should go to login page on null token', () async {
-    mockLoadCurrentAccount(account: AccountEntity(token: null));
-
-    sut.navigateToStream.listen(expectAsync1(
-      (page) => expect(page, '/login'),
-    ));
-
-    await sut.checkAccount(durationInSeconds: 0);
-  });
-
+  
   test('Should go to login page on error', () async {
     mockLoadCurrentError();
 

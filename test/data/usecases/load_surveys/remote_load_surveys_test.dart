@@ -1,24 +1,24 @@
 import 'package:faker/faker.dart';
 import 'package:test/test.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
-import 'package:hear_mobile/domain/entities/entities.dart';
-import 'package:hear_mobile/domain/helpers/helpers.dart';
-import 'package:hear_mobile/data/http/http.dart';
-import 'package:hear_mobile/data/usecases/usecases.dart';
+import '../../../../lib/domain/entities/entities.dart';
+import '../../../../lib/domain/helpers/helpers.dart';
+import '../../../../lib/data/http/http.dart';
+import '../../../../lib/data/usecases/usecases.dart';
 
 import '../../../mocks/mocks.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
-  RemoteLoadSurveys sut;
-  HttpClientSpy httpClient;
-  String url;
-  List<Map> list;
+  late RemoteLoadSurveys sut;
+  late HttpClientSpy httpClient;
+  late String url;
+  late List<Map> list;
 
-  PostExpectation mockRequest() => when(
-      httpClient.request(url: anyNamed('url'), method: anyNamed('method')));
+  When mockRequest() => when(() =>
+      httpClient.request(url: any(named: 'url'), method: any(named: 'method')));
 
   void mockHttpData(List<Map> data) {
     list = data;
@@ -33,13 +33,13 @@ void main() {
     url = faker.internet.httpUrl();
     httpClient = HttpClientSpy();
     sut = RemoteLoadSurveys(url: url, httpClient: httpClient);
-    mockHttpData(FakeSurveysFactory.makeApiJson());
+    mockHttpData(ApiFactory.makeSurveyListJson());
   });
 
   test('Should call HttpClient with correct values', () async {
     await sut.load();
 
-    verify(httpClient.request(url: url, method: 'get'));
+    verify(() => httpClient.request(url: url, method: 'get'));
   });
 
   test('Should return surveys on 200', () async {
@@ -64,7 +64,7 @@ void main() {
   test(
       'Should throw UnexpectedError if HpptClient returns 200 with invalid data',
       () async {
-    mockHttpData([SharedItemsFactory.makeInvalidJson()]);
+    mockHttpData([ApiFactory.makeInvalidJson()]);
 
     final future = sut.load();
 

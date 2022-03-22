@@ -1,9 +1,9 @@
 import 'package:test/test.dart';
-import 'package:hear_mobile/validation/validators/validators.dart';
-import 'package:hear_mobile/presentation/protocols/protocols.dart';
+import '../../../lib/validation/validators/validators.dart';
+import '../../../lib/presentation/protocols/protocols.dart';
 
 void main() {
-  EmailValidation sut;
+  late EmailValidation sut;
 
   setUp(() {
     sut = EmailValidation('any_field');

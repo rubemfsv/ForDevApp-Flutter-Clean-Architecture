@@ -1,10 +1,10 @@
 import 'package:faker/faker.dart';
 import 'package:test/test.dart';
-import 'package:hear_mobile/validation/validators/validators.dart';
-import 'package:hear_mobile/presentation/protocols/protocols.dart';
+import '../../../lib/validation/validators/validators.dart';
+import '../../../lib/presentation/protocols/protocols.dart';
 
 void main() {
-  MinLengthValidation sut;
+  late MinLengthValidation sut;
 
   setUp(() {
     sut = MinLengthValidation(field: 'any_field', length: 5);

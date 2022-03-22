@@ -1,13 +1,13 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import 'package:hear_mobile/ui/helpers/helpers.dart';
-import 'package:hear_mobile/domain/helpers/helpers.dart';
-import 'package:hear_mobile/domain/entities/entities.dart';
-import 'package:hear_mobile/domain/usecases/usecases.dart';
-import 'package:hear_mobile/presentation/protocols/protocols.dart';
-import 'package:hear_mobile/presentation/presenters/presenters.dart';
+import '../../../lib/ui/helpers/helpers.dart';
+import '../../../lib/domain/helpers/helpers.dart';
+import '../../../lib/domain/entities/entities.dart';
+import '../../../lib/domain/usecases/usecases.dart';
+import '../../../lib/presentation/protocols/protocols.dart';
+import '../../../lib/presentation/presenters/presenters.dart';
 
 import '../../mocks/mocks.dart';
 
@@ -18,24 +18,24 @@ class AuthenticationSpy extends Mock implements Authentication {}
 class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
 
 void main() {
-  GetxLoginPresenter sut;
-  AuthenticationSpy authentication;
-  ValidationSpy validation;
-  SaveCurrentAccountSpy saveCurrentAccount;
-  String email;
-  String password;
-  AccountEntity account;
+  late GetxLoginPresenter sut;
+  late AuthenticationSpy authentication;
+  late ValidationSpy validation;
+  late SaveCurrentAccountSpy saveCurrentAccount;
+  late String email;
+  late String password;
+  late AccountEntity account;
 
-  PostExpectation mockValidationCall(String field) => when(validation.validate(
-        field: field == null ? anyNamed('field') : field,
-        input: anyNamed('input'),
+  When mockValidationCall(String? field) => when(() => validation.validate(
+        field: field == null ? any(named: 'field') : field,
+        input: any(named: 'input'),
       ));
 
-  void mockValidation({String field, ValidationError value}) {
+  void mockValidation({String? field, ValidationError? value}) {
     mockValidationCall(field).thenReturn(value);
   }
 
-  PostExpectation mockAuthenticationCall() => when(authentication.auth(any));
+  When mockAuthenticationCall() => when(() => authentication.auth(any()));
 
   void mockAuthentication(AccountEntity data) {
     account = data;
@@ -46,8 +46,8 @@ void main() {
     mockAuthenticationCall().thenThrow((error));
   }
 
-  PostExpectation mockSaveCurrentAccountCall() =>
-      when(saveCurrentAccount.save(any));
+  When mockSaveCurrentAccountCall() =>
+      when(() => saveCurrentAccount.save(any()));
 
   void mockSaveCurrentAccountError() {
     mockSaveCurrentAccountCall().thenThrow((DomainError.unexpected));
@@ -65,7 +65,7 @@ void main() {
     email = faker.internet.email();
     password = faker.internet.password();
     mockValidation();
-    mockAuthentication(FakeAccountFactory.makeEntity());
+    mockAuthentication(EntityFactory.makeAccount());
   });
 
   test('Should call Validation with correct email', () {
@@ -73,7 +73,7 @@ void main() {
 
     sut.validateEmail(email);
 
-    verify(validation.validate(field: 'email', input: formData)).called(1);
+    verify(() => validation.validate(field: 'email', input: formData)).called(1);
   });
 
   test('Should emit invalid field error if email is invalid', () {
@@ -114,7 +114,7 @@ void main() {
 
     sut.validatePassword(password);
 
-    verify(validation.validate(field: 'password', input: formData)).called(1);
+    verify(() => validation.validate(field: 'password', input: formData)).called(1);
   });
 
   test('Should emit required field error if password is empty', () {
@@ -163,7 +163,7 @@ void main() {
 
     await sut.auth();
 
-    verify(authentication
+    verify(() => authentication
             .auth(AuthenticationParams(email: email, password: password)))
         .called(1);
   });
@@ -174,7 +174,7 @@ void main() {
 
     await sut.auth();
 
-    verify(saveCurrentAccount.save(account)).called(1);
+    verify(() => saveCurrentAccount.save(account)).called(1);
   });
 
   test('Should emit unexpectedError if SaveCurrentAccount fails', () async {

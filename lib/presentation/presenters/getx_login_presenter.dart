@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:get/get.dart';
-import 'package:meta/meta.dart';
 
 import '../../ui/helpers/helpers.dart';
 import '../../ui/pages/login/login_presenter.dart';
@@ -22,13 +21,13 @@ class GetxLoginPresenter extends GetxController
   final Authentication authentication;
   final SaveCurrentAccount saveCurrentAccount;
 
-  String _email;
-  String _password;
+  String? _email;
+  String? _password;
 
   GetxLoginPresenter({
-    @required this.validation,
-    @required this.authentication,
-    @required this.saveCurrentAccount,
+    required this.validation,
+    required this.authentication,
+    required this.saveCurrentAccount,
   });
 
   void validateEmail(String email) {
@@ -43,7 +42,7 @@ class GetxLoginPresenter extends GetxController
     _validateForm();
   }
 
-  UIError _validateField(String field) {
+  UIError? _validateField(String field) {
     final formData = {
       'email': _email,
       'password': _password,
@@ -72,8 +71,8 @@ class GetxLoginPresenter extends GetxController
       mainError = null;
       isLoading = true;
       final account = await authentication.auth(AuthenticationParams(
-        email: _email,
-        password: _password,
+        email: _email!,
+        password: _password!,
       ));
       await saveCurrentAccount.save(account);
       navigateTo = '/surveys';
@@ -89,8 +88,6 @@ class GetxLoginPresenter extends GetxController
       isLoading = false;
     }
   }
-
-  void dispose() {}
 
   void goToSignUp() {
     navigateTo = '/signup';

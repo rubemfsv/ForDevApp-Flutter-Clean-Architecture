@@ -5,7 +5,7 @@ class ReloadScreen extends StatelessWidget {
   final String error;
   final Future<void> Function() reload;
 
-  ReloadScreen({@required this.error, @required this.reload});
+  ReloadScreen({required this.error, required this.reload});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class ReloadScreen extends StatelessWidget {
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(error,
             style: TextStyle(fontSize: 16), textAlign: TextAlign.center),
-        RaisedButton(
+        ElevatedButton(
           child: Text(R.translations.reloadButtonText),
           onPressed: reload,
         ),

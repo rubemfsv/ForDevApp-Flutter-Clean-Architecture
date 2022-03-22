@@ -1,4 +1,4 @@
-package com.example.hear_mobile
+package com.example.fordev
 
 import io.flutter.embedding.android.FlutterActivity
 
