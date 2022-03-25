@@ -10,8 +10,6 @@ import '../../../../lib/data/usecases/usecases.dart';
 
 import '../../../mocks/mocks.dart';
 
-class HttpClientSpy extends Mock implements HttpClient {}
-
 void main() {
   late RemoteAuthentication sut;
   late HttpClientSpy httpClient;
@@ -19,27 +17,13 @@ void main() {
   late AuthenticationParams params;
   late Map apiResult;
 
-  When mockRequest() => when(() => httpClient.request(
-        url: any(named: 'url'),
-        method: any(named: 'method'),
-        body: any(named: 'body'),
-      ));
-
-  void mockHttpData(Map data) {
-    apiResult = data;
-    mockRequest().thenAnswer((_) async => data);
-  }
-
-  void mockHttpError(HttpError error) {
-    mockRequest().thenThrow(error);
-  }
-
   setUp(() {
     httpClient = HttpClientSpy();
     url = faker.internet.httpUrl();
     sut = RemoteAuthentication(httpClient: httpClient, url: url);
     params = ParamsFactory.makeAuthentication();
-    mockHttpData(ApiFactory.makeAccountJson());
+    apiResult = ApiFactory.makeAccountJson();
+    httpClient.mockRequest(apiResult);
   });
   test('Should call HttpClient with correct values', () async {
     await sut.auth(params);
@@ -59,7 +43,7 @@ void main() {
   test(
       'Should throw UnexpectedError if HpptClient returns 200 with invalid data',
       () async {
-    mockHttpData(ApiFactory.makeInvalidJson());
+    httpClient.mockRequest(ApiFactory.makeInvalidJson());
 
     final future = sut.auth(params);
 
@@ -67,7 +51,7 @@ void main() {
   });
 
   test('Should throw UnexpectedError if HpptClient returns 400', () async {
-    mockHttpError(HttpError.badRequest);
+    httpClient.mockRequestError(HttpError.badRequest);
 
     final future = sut.auth(params);
 
@@ -76,14 +60,14 @@ void main() {
 
   test('Should throw InvalidCredentialsError if HpptClient returns 401',
       () async {
-    mockHttpError(HttpError.unauthorized);
+    httpClient.mockRequestError(HttpError.unauthorized);
 
     final future = sut.auth(params);
 
     expect(future, throwsA(DomainError.invalidCredentials));
   });
   test('Should throw UnexpectedError if HpptClient returns 404', () async {
-    mockHttpError(HttpError.notFound);
+    httpClient.mockRequestError(HttpError.notFound);
 
     final future = sut.auth(params);
 
@@ -91,7 +75,7 @@ void main() {
   });
 
   test('Should throw UnexpectedError if HpptClient returns 500', () async {
-    mockHttpError(HttpError.serverError);
+    httpClient.mockRequestError(HttpError.serverError);
 
     final future = sut.auth(params);
 

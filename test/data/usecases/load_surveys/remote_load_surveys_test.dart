@@ -9,31 +9,18 @@ import '../../../../lib/data/usecases/usecases.dart';
 
 import '../../../mocks/mocks.dart';
 
-class HttpClientSpy extends Mock implements HttpClient {}
-
 void main() {
   late RemoteLoadSurveys sut;
   late HttpClientSpy httpClient;
   late String url;
   late List<Map> list;
 
-  When mockRequest() => when(() =>
-      httpClient.request(url: any(named: 'url'), method: any(named: 'method')));
-
-  void mockHttpData(List<Map> data) {
-    list = data;
-    mockRequest().thenAnswer((_) async => data);
-  }
-
-  void mockHttpError(HttpError error) {
-    mockRequest().thenThrow(error);
-  }
-
   setUp(() {
     url = faker.internet.httpUrl();
     httpClient = HttpClientSpy();
     sut = RemoteLoadSurveys(url: url, httpClient: httpClient);
-    mockHttpData(ApiFactory.makeSurveyListJson());
+    list = ApiFactory.makeSurveyListJson();
+    httpClient.mockRequest(list);
   });
 
   test('Should call HttpClient with correct values', () async {
@@ -64,7 +51,7 @@ void main() {
   test(
       'Should throw UnexpectedError if HpptClient returns 200 with invalid data',
       () async {
-    mockHttpData([ApiFactory.makeInvalidJson()]);
+    httpClient.mockRequest([ApiFactory.makeInvalidJson()]);
 
     final future = sut.load();
 
@@ -72,7 +59,7 @@ void main() {
   });
 
   test('Should throw AccessDeniedError if HpptClient returns 403', () async {
-    mockHttpError(HttpError.forbidden);
+    httpClient.mockRequestError(HttpError.forbidden);
 
     final future = sut.load();
 
@@ -80,7 +67,7 @@ void main() {
   });
 
   test('Should throw UnexpectedError if HpptClient returns 404', () async {
-    mockHttpError(HttpError.notFound);
+    httpClient.mockRequestError(HttpError.notFound);
 
     final future = sut.load();
 
@@ -88,7 +75,7 @@ void main() {
   });
 
   test('Should throw UnexpectedError if HpptClient returns 500', () async {
-    mockHttpError(HttpError.serverError);
+    httpClient.mockRequestError(HttpError.serverError);
 
     final future = sut.load();
 

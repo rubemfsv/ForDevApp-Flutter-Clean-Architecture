@@ -9,8 +9,6 @@ import '../../../../lib/data/usecases/usecases.dart';
 
 import '../../../mocks/mocks.dart';
 
-class HttpClientSpy extends Mock implements HttpClient {}
-
 void main() {
   late RemoteSaveSurveyResult sut;
   late HttpClientSpy httpClient;
@@ -18,27 +16,13 @@ void main() {
   late Map surveyResult;
   late String answer;
 
-  When mockRequest() => when(() => httpClient.request(
-        url: any(named: 'url'),
-        method: any(named: 'method'),
-        body: any(named: 'body'),
-      ));
-
-  void mockHttpData(Map data) {
-    surveyResult = data;
-    mockRequest().thenAnswer((_) async => data);
-  }
-
-  void mockHttpError(HttpError error) {
-    mockRequest().thenThrow(error);
-  }
-
   setUp(() {
     url = faker.internet.httpUrl();
     httpClient = HttpClientSpy();
     sut = RemoteSaveSurveyResult(url: url, httpClient: httpClient);
     answer = faker.lorem.sentence();
-    mockHttpData(ApiFactory.makeSurveyResultJson());
+    surveyResult = ApiFactory.makeSurveyResultJson();
+    httpClient.mockRequest(surveyResult);
   });
 
   test('Should call HttpClient with correct values', () async {
@@ -81,7 +65,7 @@ void main() {
   test(
       'Should throw UnexpectedError if HpptClient returns 200 with invalid data',
       () async {
-    mockHttpData(ApiFactory.makeInvalidJson());
+    httpClient.mockRequest(ApiFactory.makeInvalidJson());
 
     final future = sut.save(answer: answer);
 
@@ -89,7 +73,7 @@ void main() {
   });
 
   test('Should throw AccessDeniedError if HpptClient returns 403', () async {
-    mockHttpError(HttpError.forbidden);
+    httpClient.mockRequestError(HttpError.forbidden);
 
     final future = sut.save(answer: answer);
 
@@ -97,7 +81,7 @@ void main() {
   });
 
   test('Should throw UnexpectedError if HpptClient returns 404', () async {
-    mockHttpError(HttpError.notFound);
+    httpClient.mockRequestError(HttpError.notFound);
 
     final future = sut.save(answer: answer);
 
@@ -105,7 +89,7 @@ void main() {
   });
 
   test('Should throw UnexpectedError if HpptClient returns 500', () async {
-    mockHttpError(HttpError.serverError);
+    httpClient.mockRequestError(HttpError.serverError);
 
     final future = sut.save(answer: answer);
 

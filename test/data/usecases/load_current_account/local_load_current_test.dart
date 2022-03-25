@@ -2,36 +2,23 @@ import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import '../../../../lib/data/cache/cache.dart';
 import '../../../../lib/data/usecases/usecases.dart';
 import '../../../../lib/domain/entities/entities.dart';
 import '../../../../lib/domain/helpers/helpers.dart';
 
-class FetchSecureCacheStorageSpy extends Mock
-    implements FetchSecureCacheStorage {}
+import '../../../mocks/mocks.dart';
 
 void main() {
-  late FetchSecureCacheStorageSpy fetchSecureCacheStorage;
+  late SecureCacheStorageSpy fetchSecureCacheStorage;
   late LocalLoadCurrentAccount sut;
   late String token;
 
-  When mockFetchSecureCall() =>
-      when(() => fetchSecureCacheStorage.fetch(any()));
-
-  void mockFetchSecure(String? data) {
-    mockFetchSecureCall().thenAnswer((_) async => data);
-  }
-
-  void mockFetchSecureError() {
-    mockFetchSecureCall().thenThrow(Exception());
-  }
-
   setUp(() {
-    fetchSecureCacheStorage = FetchSecureCacheStorageSpy();
+    fetchSecureCacheStorage = SecureCacheStorageSpy();
     sut = LocalLoadCurrentAccount(
         fetchSecureCacheStorage: fetchSecureCacheStorage);
     token = faker.guid.guid();
-    mockFetchSecure(token);
+    fetchSecureCacheStorage.mockFetch(token);
   });
 
   test('Should call FetchSecureCacheStorage with correct value', () async {
@@ -48,7 +35,7 @@ void main() {
 
   test('Should throw UnexPectedError if FetchSecureCacheStorage throws',
       () async {
-    mockFetchSecureError();
+    fetchSecureCacheStorage.mockFetchError();
 
     final future = sut.load();
 
@@ -57,7 +44,7 @@ void main() {
 
   test('Should throw UnexPectedError if FetchSecureCacheStorage returns null',
       () async {
-    mockFetchSecure(null);
+    fetchSecureCacheStorage.mockFetch(null);
 
     final future = sut.load();
 
