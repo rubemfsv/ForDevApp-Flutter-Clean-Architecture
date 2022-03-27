@@ -1,5 +1,4 @@
 import 'package:faker/faker.dart';
-import 'package:http/http.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
@@ -7,7 +6,7 @@ import '../../../lib/data/http/http.dart';
 
 import '../../../lib/infra/http/http.dart';
 
-class ClientSpy extends Mock implements Client {}
+import '../mocks/mocks.dart';
 
 void main() {
   late ClientSpy client;
@@ -17,7 +16,12 @@ void main() {
   setUp(() {
     client = ClientSpy();
     sut = HttpAdapter(client);
+  });
+
+   setUpAll(() {
     url = faker.internet.httpUrl();
+
+    registerFallbackValue(Uri.parse(url));
   });
 
   group('shared', () {
@@ -29,18 +33,6 @@ void main() {
   });
 
   group('post', () {
-    When mockRequest() => when(() => client.post(any(),
-        body: any(named: 'body'), headers: any(named: 'headers')));
-    void mockResponse(int statusCode,
-            {String body = '{"any_key":"any_value"}'}) =>
-        mockRequest().thenAnswer((_) async => Response(body, statusCode));
-
-    void mockError() => mockRequest().thenThrow(Exception());
-
-    setUp(() {
-      mockResponse(200);
-    });
-
     test('Should call post with correct values', () async {
       await sut
           .request(url: url, method: 'post', body: {'any_key': 'any_value'});
@@ -83,7 +75,7 @@ void main() {
     });
 
     test('Should return null if post returns 200 with no data', () async {
-      mockResponse(200, body: '');
+      client.mockPost(200, body: '');
 
       final response = await sut.request(url: url, method: 'post');
 
@@ -91,7 +83,7 @@ void main() {
     });
 
     test('Should return null if post returns 204', () async {
-      mockResponse(204, body: '');
+      client.mockPost(204, body: '');
 
       final response = await sut.request(url: url, method: 'post');
 
@@ -99,7 +91,7 @@ void main() {
     });
 
     test('Should return null if post returns 204 with data', () async {
-      mockResponse(204);
+      client.mockPost(204);
 
       final response = await sut.request(url: url, method: 'post');
 
@@ -107,7 +99,7 @@ void main() {
     });
 
     test('Should return BadRequestError if post returns 400', () async {
-      mockResponse(400, body: '');
+      client.mockPost(400, body: '');
 
       final future = sut.request(url: url, method: 'post');
 
@@ -115,7 +107,7 @@ void main() {
     });
 
     test('Should return BadRequestError if post returns 400', () async {
-      mockResponse(400);
+      client.mockPost(400);
 
       final future = sut.request(url: url, method: 'post');
 
@@ -123,7 +115,7 @@ void main() {
     });
 
     test('Should return UnauthorizedError if post returns 401', () async {
-      mockResponse(401);
+      client.mockPost(401);
 
       final future = sut.request(url: url, method: 'post');
 
@@ -131,7 +123,7 @@ void main() {
     });
 
     test('Should return ForbiddenError if post returns 403', () async {
-      mockResponse(403);
+      client.mockPost(403);
 
       final future = sut.request(url: url, method: 'post');
 
@@ -139,7 +131,7 @@ void main() {
     });
 
     test('Should return NotFoundError if post returns 404', () async {
-      mockResponse(404);
+      client.mockPost(404);
 
       final future = sut.request(url: url, method: 'post');
 
@@ -147,7 +139,7 @@ void main() {
     });
 
     test('Should return ServerError if post returns 500', () async {
-      mockResponse(500);
+      client.mockPost(500);
 
       final future = sut.request(url: url, method: 'post');
 
@@ -155,7 +147,7 @@ void main() {
     });
 
     test('Should return ServerError if post throws', () async {
-      mockError();
+      client.mockPostError();
 
       final future = sut.request(url: url, method: 'post');
 
@@ -164,19 +156,6 @@ void main() {
   });
 
   group('get', () {
-    When mockRequest() =>
-        when(() => client.get(any(), headers: any(named: 'headers')));
-
-    void mockResponse(int statusCode,
-            {String body = '{"any_key":"any_value"}'}) =>
-        mockRequest().thenAnswer((_) async => Response(body, statusCode));
-
-    void mockError() => mockRequest().thenThrow(Exception());
-
-    setUp(() {
-      mockResponse(200);
-    });
-
     test('Should call get with correct values', () async {
       await sut.request(url: url, method: 'get');
 
@@ -208,7 +187,7 @@ void main() {
     });
 
     test('Should return null if get returns 200 with no data', () async {
-      mockResponse(200, body: '');
+      client.mockGet(200, body: '');
 
       final response = await sut.request(url: url, method: 'get');
 
@@ -216,7 +195,7 @@ void main() {
     });
 
     test('Should return null if get returns 204', () async {
-      mockResponse(204, body: '');
+      client.mockGet(204, body: '');
 
       final response = await sut.request(url: url, method: 'get');
 
@@ -224,7 +203,7 @@ void main() {
     });
 
     test('Should return null if get returns 204 with data', () async {
-      mockResponse(204);
+      client.mockGet(204);
 
       final response = await sut.request(url: url, method: 'get');
 
@@ -232,7 +211,7 @@ void main() {
     });
 
     test('Should return BadRequestError if get returns 400', () async {
-      mockResponse(400, body: '');
+      client.mockGet(400, body: '');
 
       final future = sut.request(url: url, method: 'get');
 
@@ -240,7 +219,7 @@ void main() {
     });
 
     test('Should return BadRequestError if get returns 400', () async {
-      mockResponse(400);
+      client.mockGet(400);
 
       final future = sut.request(url: url, method: 'get');
 
@@ -248,7 +227,7 @@ void main() {
     });
 
     test('Should return UnauthorizedError if get returns 401', () async {
-      mockResponse(401);
+      client.mockGet(401);
 
       final future = sut.request(url: url, method: 'get');
 
@@ -256,7 +235,7 @@ void main() {
     });
 
     test('Should return ForbiddenError if get returns 403', () async {
-      mockResponse(403);
+      client.mockGet(403);
 
       final future = sut.request(url: url, method: 'get');
 
@@ -264,7 +243,7 @@ void main() {
     });
 
     test('Should return NotFoundError if get returns 404', () async {
-      mockResponse(404);
+      client.mockGet(404);
 
       final future = sut.request(url: url, method: 'get');
 
@@ -272,7 +251,7 @@ void main() {
     });
 
     test('Should return ServerError if get returns 500', () async {
-      mockResponse(500);
+      client.mockGet(500);
 
       final future = sut.request(url: url, method: 'get');
 
@@ -280,7 +259,7 @@ void main() {
     });
 
     test('Should return ServerError if get throws', () async {
-      mockError();
+      client.mockGetError();
 
       final future = sut.request(url: url, method: 'get');
 
@@ -289,18 +268,6 @@ void main() {
   });
 
   group('put', () {
-    When mockRequest() => when(() => client.put(any(),
-        body: any(named: 'body'), headers: any(named: 'headers')));
-    void mockResponse(int statusCode,
-            {String body = '{"any_key":"any_value"}'}) =>
-        mockRequest().thenAnswer((_) async => Response(body, statusCode));
-
-    void mockError() => mockRequest().thenThrow(Exception());
-
-    setUp(() {
-      mockResponse(200);
-    });
-
     test('Should call put with correct values', () async {
       await sut
           .request(url: url, method: 'put', body: {'any_key': 'any_value'});
@@ -343,7 +310,7 @@ void main() {
     });
 
     test('Should return null if put returns 200 with no data', () async {
-      mockResponse(200, body: '');
+      client.mockPut(200, body: '');
 
       final response = await sut.request(url: url, method: 'put');
 
@@ -351,7 +318,7 @@ void main() {
     });
 
     test('Should return null if put returns 204', () async {
-      mockResponse(204, body: '');
+      client.mockPut(204, body: '');
 
       final response = await sut.request(url: url, method: 'put');
 
@@ -359,7 +326,7 @@ void main() {
     });
 
     test('Should return null if put returns 204 with data', () async {
-      mockResponse(204);
+      client.mockPut(204);
 
       final response = await sut.request(url: url, method: 'put');
 
@@ -367,7 +334,7 @@ void main() {
     });
 
     test('Should return BadRequestError if put returns 400', () async {
-      mockResponse(400, body: '');
+      client.mockPut(400, body: '');
 
       final future = sut.request(url: url, method: 'put');
 
@@ -375,7 +342,7 @@ void main() {
     });
 
     test('Should return BadRequestError if put returns 400', () async {
-      mockResponse(400);
+      client.mockPut(400);
 
       final future = sut.request(url: url, method: 'put');
 
@@ -383,7 +350,7 @@ void main() {
     });
 
     test('Should return UnauthorizedError if put returns 401', () async {
-      mockResponse(401);
+      client.mockPut(401);
 
       final future = sut.request(url: url, method: 'put');
 
@@ -391,7 +358,7 @@ void main() {
     });
 
     test('Should return ForbiddenError if put returns 403', () async {
-      mockResponse(403);
+      client.mockPut(403);
 
       final future = sut.request(url: url, method: 'put');
 
@@ -399,7 +366,7 @@ void main() {
     });
 
     test('Should return NotFoundError if put returns 404', () async {
-      mockResponse(404);
+      client.mockPut(404);
 
       final future = sut.request(url: url, method: 'put');
 
@@ -407,7 +374,7 @@ void main() {
     });
 
     test('Should return ServerError if put returns 500', () async {
-      mockResponse(500);
+      client.mockPut(500);
 
       final future = sut.request(url: url, method: 'put');
 
@@ -415,7 +382,7 @@ void main() {
     });
 
     test('Should return ServerError if put throws', () async {
-      mockError();
+      client.mockPutError();
 
       final future = sut.request(url: url, method: 'put');
 

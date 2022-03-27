@@ -4,7 +4,7 @@ import '../../../lib/data/http/http.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {
   When mockRequestCall() => when(
-        () => request(
+        () => this.request(
           url: any(named: 'url'),
           method: any(named: 'method'),
           body: any(named: 'body'),
