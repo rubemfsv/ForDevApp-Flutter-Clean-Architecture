@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../helpers/helpers.dart';
 
-void showLoading(BuildContext context) {
-  showDialog(
+Future<void> showLoading(BuildContext context) async {
+  await Future.delayed(Duration.zero);
+  await showDialog(
     context: context,
     barrierDismissible: false,
     builder: (context) => SimpleDialog(

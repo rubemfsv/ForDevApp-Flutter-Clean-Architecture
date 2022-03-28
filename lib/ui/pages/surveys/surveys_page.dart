@@ -44,7 +44,7 @@ class _SurveysPageState extends State<SurveysPage>
                   );
                 }
                 if (snapshot.hasData) {
-                  return Provider(
+                  return ListenableProvider(
                     create: (_) => widget.presenter,
                     child: SurveyItems(snapshot.data!),
                   );
