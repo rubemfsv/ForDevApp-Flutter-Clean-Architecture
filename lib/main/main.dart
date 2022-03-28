@@ -17,7 +17,7 @@ class App extends StatelessWidget {
     final routeObserver = Get.put<RouteObserver>(RouteObserver<PageRoute>());
 
     return GetMaterialApp(
-      title: 'Hear',
+      title: '4Dev',
       debugShowCheckedModeBanner: false,
       theme: makeAppTheme(),
       navigatorObservers: [routeObserver],

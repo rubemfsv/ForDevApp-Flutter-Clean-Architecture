@@ -20,7 +20,7 @@ class PtBr implements Translations {
   String get reloadButtonText => "Recarregar";
 
   // Other texts
-  String get appTitle => "Hear";
+  String get appTitle => "4Dev";
   String get createAccount => "Criar conta";
   String get loading => "Aguarde...";
   String get login => "Login";

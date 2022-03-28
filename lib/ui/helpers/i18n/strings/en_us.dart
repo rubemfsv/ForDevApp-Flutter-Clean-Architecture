@@ -19,7 +19,7 @@ class EnUs implements Translations {
   String get reloadButtonText => "Reload";
 
   // Other texts
-  String get appTitle => "Hear";
+  String get appTitle => "4Dev";
   String get createAccount => "Create account";
   String get loading => "Loading...";
   String get login => "Login";

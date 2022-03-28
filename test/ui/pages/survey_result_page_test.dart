@@ -37,15 +37,15 @@ void main() {
     await loadPage(tester);
 
     presenter.emitLoading();
-    await tester.pump();
+    await tester.pump(Duration(seconds: 5));
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
     presenter.emitLoading(false);
-    await tester.pump();
+    await tester.pump(Duration(seconds: 5));
     expect(find.byType(CircularProgressIndicator), findsNothing);
 
     presenter.emitLoading();
-    await tester.pump();
+    await tester.pump(Duration(seconds: 5));
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 
