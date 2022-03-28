@@ -3,17 +3,12 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import '../../../lib/domain/entities/entities.dart';
-import '../../../lib/domain/usecases/usecases.dart';
 import '../../../lib/domain/helpers/domain_error.dart';
 import '../../../lib/presentation/presenters/presenters.dart';
 import '../../../lib/ui/helpers/helpers.dart';
 import '../../../lib/ui/pages/pages.dart';
 
 import '../../mocks/mocks.dart';
-
-class LoadSurveyResultSpy extends Mock implements LoadSurveyResult {}
-
-class SaveSurveyResultSpy extends Mock implements SaveSurveyResult {}
 
 void main() {
   late LoadSurveyResultSpy loadSurveyResult;
@@ -23,34 +18,6 @@ void main() {
   late SurveyResultEntity saveResult;
   late String surveyId;
   late String answer;
-
-  When mockLoadSurveyResultCall() => when(
-      () => loadSurveyResult.loadBySurvey(surveyId: any(named: 'surveyId')));
-
-  void mockLoadSurveyResult(SurveyResultEntity data) {
-    loadResult = data;
-    mockLoadSurveyResultCall().thenAnswer((_) async => loadResult);
-  }
-
-  void mockLoadSurveyResultError() =>
-      mockLoadSurveyResultCall().thenThrow(DomainError.unexpected);
-
-  void mockLoadAccessDeniedError() =>
-      mockLoadSurveyResultCall().thenThrow(DomainError.accessDenied);
-
-  When mockSaveSurveyResultCall() =>
-      when(() => saveSurveyResult.save(answer: any(named: 'answer')));
-
-  void mockSaveSurveyResult(SurveyResultEntity data) {
-    saveResult = data;
-    mockSaveSurveyResultCall().thenAnswer((_) async => saveResult);
-  }
-
-  void mockSaveSurveyResultError() =>
-      mockSaveSurveyResultCall().thenThrow(DomainError.unexpected);
-
-  void mockSaveAccessDeniedError() =>
-      mockSaveSurveyResultCall().thenThrow(DomainError.accessDenied);
 
   setUp(() {
     surveyId = faker.guid.guid();
@@ -62,8 +29,10 @@ void main() {
       surveyId: surveyId,
     );
     answer = faker.lorem.sentence();
-    mockLoadSurveyResult(EntityFactory.makeSurveyResult());
-    mockSaveSurveyResult(EntityFactory.makeSurveyResult());
+    loadResult = EntityFactory.makeSurveyResult();
+    loadSurveyResult.mockLoad(loadResult);
+    saveResult = EntityFactory.makeSurveyResult();
+    saveSurveyResult.mockSaveSurveyResult(saveResult);
   });
 
   group('loadData', () {
@@ -100,7 +69,7 @@ void main() {
     });
 
     test('Should throw correct errors on failure', () async {
-      mockLoadSurveyResultError();
+      loadSurveyResult.mockLoadError(DomainError.unexpected);
       expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
       sut.surveyResultStream.listen(null,
           onError: expectAsync1(
@@ -111,7 +80,7 @@ void main() {
     });
 
     test('Should emit correct events on access denied', () async {
-      mockLoadAccessDeniedError();
+      loadSurveyResult.mockLoadError(DomainError.accessDenied);
       expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
       expectLater(sut.isSessionExpiredStream, emits(true));
 
@@ -160,7 +129,7 @@ void main() {
     });
 
     test('Should throw correct errors on failure', () async {
-      mockSaveSurveyResultError();
+      saveSurveyResult.mockSaveSurveyResultError(DomainError.unexpected);
       expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
       sut.surveyResultStream.listen(null,
           onError: expectAsync1(
@@ -171,7 +140,7 @@ void main() {
     });
 
     test('Should emit correct events on access denied', () async {
-      mockSaveAccessDeniedError();
+      saveSurveyResult.mockSaveSurveyResultError(DomainError.accessDenied);
       expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
       expectLater(sut.isSessionExpiredStream, emits(true));
 

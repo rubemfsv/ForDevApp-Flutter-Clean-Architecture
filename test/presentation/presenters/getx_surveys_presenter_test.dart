@@ -2,7 +2,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import '../../../lib/domain/entities/entities.dart';
-import '../../../lib/domain/usecases/usecases.dart';
 import '../../../lib/domain/helpers/domain_error.dart';
 import '../../../lib/presentation/presenters/presenters.dart';
 import '../../../lib/ui/helpers/helpers.dart';
@@ -10,30 +9,16 @@ import '../../../lib/ui/pages/pages.dart';
 
 import '../../mocks/mocks.dart';
 
-class LoadSurveysSpy extends Mock implements LoadSurveys {}
-
 void main() {
   late LoadSurveysSpy loadSurveys;
   late GetxSurveysPresenter sut;
   late List<SurveyEntity> surveys;
 
-  When mockLoadSurveysCall() => when(() => loadSurveys.load());
-
-  void mockLoadSurveys(List<SurveyEntity> data) {
-    surveys = data;
-    mockLoadSurveysCall().thenAnswer((_) async => surveys);
-  }
-
-  void mockLoadSurveysError() =>
-      mockLoadSurveysCall().thenThrow(DomainError.unexpected);
-
-  void mockAccessDeniedError() =>
-      mockLoadSurveysCall().thenThrow(DomainError.accessDenied);
-
   setUp(() {
     loadSurveys = LoadSurveysSpy();
     sut = GetxSurveysPresenter(loadSurveys: loadSurveys);
-    mockLoadSurveys(EntityFactory.makeSurveyList());
+    surveys = EntityFactory.makeSurveyList();
+    loadSurveys.mockLoad(surveys);
   });
 
   test('Should call LoadSurveys on loadData', () async {
@@ -64,7 +49,7 @@ void main() {
   });
 
   test('Should throw correct errors on failure', () async {
-    mockLoadSurveysError();
+    loadSurveys.mockLoadError(DomainError.unexpected);
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
     sut.surveysStream.listen(null,
         onError: expectAsync1(
@@ -75,7 +60,7 @@ void main() {
   });
 
   test('Should emit correct events on access denied', () async {
-    mockAccessDeniedError();
+    loadSurveys.mockLoadError(DomainError.accessDenied);
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
     expectLater(sut.isSessionExpiredStream, emits(true));
 
