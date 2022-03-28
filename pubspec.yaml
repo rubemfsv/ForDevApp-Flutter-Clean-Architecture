@@ -1,11 +1,11 @@
 name: fordev
 description: Enquetes para programadores.
-publish_to: 'none' 
+publish_to: 'none'
 
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:
@@ -31,7 +31,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  assets: 
+  assets:
     - lib/ui/assets/
 
 flutter_icons:
