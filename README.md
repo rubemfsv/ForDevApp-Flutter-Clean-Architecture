@@ -4,16 +4,16 @@
 ![Flutter Version](https://img.shields.io/static/v1?label=flutter&message=2.5.1&color=42a5f5)
 ![Null Safety](https://img.shields.io/static/v1?label=null-safety&message=done&color=success)
 
-# **4Dev Flutter - Enquetes para Programadores**
+# **4Dev Flutter - Polls for Programmers**
 
-Essa aplicativo faz parte do treinamento do professor Rodrigo Manguinho (Mango) na Udemy.
+This application is part of the training of Professor Rodrigo Manguinho (Mango) on Udemy.
 
-O objetivo do treinamento é mostrar como criar um aplicativo com Flutter usando uma arquitetura bem definida e desacoplada, seguindo TDD (programação orientada a testes) como metodologia de trabalho, Clean Architecture para fazer a distribuição de responsabilidades em camadas, sempre seguindo os princípios do SOLID e aplicando Design Patterns para resolver alguns problemas comuns.
+The objective of the training is to show how to create an application with Flutter using a well-defined and decoupled architecture, following TDD (test-oriented programming) as a working methodology, Clean Architecture to distribute responsibilities in layers, always following the principles of SOLID and applying Design Patterns to solve some common problems.
 <br /><br />
 
 ## [**Link para a documentação da API**](http://fordevs.herokuapp.com/api-docs)
 
-> ## Princípios
+> ## Principles
 
 * Single Responsibility Principle (SRP)
 * Open Closed Principle (OCP)
@@ -43,7 +43,7 @@ O objetivo do treinamento é mostrar como criar um aplicativo com Flutter usando
 * Strategy
 * AAA (Arrange, Act, Assert)
 
-> ## Metodologias e Designs
+> ## Methodologies and Designs
 
 * TDD
 * BDD
@@ -54,7 +54,7 @@ O objetivo do treinamento é mostrar como criar um aplicativo com Flutter usando
 * Dependency Diagrams
 * Use Cases
 
-> ## Bibliotecas e Ferramentas
+> ## Libraries and Tools
 
 * Flutter
 * Flutter Version Management
@@ -73,7 +73,7 @@ O objetivo do treinamento é mostrar como criar um aplicativo com Flutter usando
 * Image Test Utils
 * Network Image Mock
 
-> ## Features do Dart/Flutter
+> ## Dart/Flutter Features
 * Null Safety
 * Classes
 * Abstract Classes
@@ -93,13 +93,13 @@ O objetivo do treinamento é mostrar como criar um aplicativo com Flutter usando
 * Assets
 * App Icon
 
-> ## Features de Testes
+> ## Tests Features
 
-* Testes Unitários
-* Testes de Widgets
-* Testes de Streams
-* Testes de Integração
-* Cobertura de Testes
+* Unit testing
+* Widgets testing
+* Streams testing
+* Integration testing
+* Test Coverage
 * Test Doubles
 * Mocks
 * Stubs
